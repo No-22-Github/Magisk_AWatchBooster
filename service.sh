@@ -66,12 +66,13 @@ CPU_SCALING="performance"
 
 # 其他选项
 # TCP 网络优化
-OPTIMIZE_TCP=$(read_config "TCP网络优化 " "1")
+OPTIMIZE_TCP=$(read_config "TCP网络优化 " "0")
 # 模块日志输出
 OPTIMIZE_MODULE=$(read_config "模块日志输出 " "0")
 # 无线 ADB 调试
 WIRELESS_ADB=$(read_config "无线ADB调试 " "0")
-
+# ZRAM 设置
+ZRAM_STATUS=$(read_config "ZRAM状态 " "0")
 # 调整模块日志输出
 if [ "$OPTIMIZE_MODULE" == "0" ]; then
   # 判断日志文件是否为已创建
@@ -104,7 +105,7 @@ if [ "$PERFORMANCE" == "0" ]; then
   echo $FOREGROUND > /dev/cpuset/foreground/cpus
   # 上层应用
   echo $SYSTEM_FOREGROUND > /dev/cpuset/top-app/cpus
-
+  module_log "性能模式，启动！"
   module_log "正在设置 CPU 应用分配"
   module_log "- 用户的后台应用: $BACKGROUND"
   module_log "- 系统的后台应用: $SYSTEM_BACKGROUND"
@@ -149,186 +150,8 @@ if [ "$PERFORMANCE" == "1" ]; then
   module_log "CPU 调度模式为 SPRDEMAND 节电模式"
 fi
 
-
-# 启用 CPU 动态电压调节的功能
-echo "1" > /sys/devices/system/cpu/c1dcvs/enable_c1dcvs
-if [ "$PERFORMANCE" == "0" ]; then
-  # CPU 调整
-  echo "100" > /dev/stune/schedtune.boost
-  echo "100" > /dev/stune/foreground/schedtune.boost
-  echo "100" > /dev/stune/top-app/schedtune.boost
-  echo "20" > /dev/stune/background/schedtune.boost
-  echo "20" > /dev/stune/rt/schedtune.boost
-  echo "50" > /dev/stune/io/schedtune.boost
-  echo "50" > /dev/stune/camera-daemon/schedtune.boost
-  # 禁用 调度自动分组
-  echo "0" > /proc/sys/kernel/sched_autogroup_enabled
-  # 功耗换性能
-  echo "1" > /sys/module/ged/parameters/gx_game_mode
-  echo "47" > /sys/module/ged/parameters/gx_fb_dvfs_margin
-  echo "1" > /sys/module/ged/parameters/enable_cpu_boost
-  echo "1" > /sys/module/ged/parameters/enable_gpu_boost
-  echo "1" > /sys/module/ged/parameters/gx_dfps
-  echo "1" > /sys/devices/system/cpu/cpufreq/performance/boost
-  echo "1" > /sys/devices/system/cpu/cpufreq/performance/max_freq_hysteresis
-  echo "1" > /sys/devices/system/cpu/cpufreq/performance/align_windows
-  echo "0" > /sys/module/adreno_idler/parameters/adreno_idler_active
-  echo "1" > /sys/module/msm_performance/parameters/touchboost
-  echo "-1" > /sys/kernel/fpsgo/fbt/thrm_limit_cpu
-  echo "-1" > /sys/kernel/fpsgo/fbt/thrm_sub_cpu
-  # CPU 极致优化
-  # DDR
-  chmod 777 /sys/devices/system/cpu/bus_dcvs/DDR/boost_freq
-  echo "4224000" > /sys/devices/system/cpu/bus_dcvs/DDR/boost_freq
-  chmod 444 /sys/devices/system/cpu/bus_dcvs/DDR/boost_freq
-  chmod 777 /sys/devices/system/cpu/bus_dcvs/DDR/hw_min_freq
-  echo "4224000" > /sys/devices/system/cpu/bus_dcvs/DDR/hw_min_freq
-  chmod 444 /sys/devices/system/cpu/bus_dcvs/DDR/hw_min_freq
-  # DDRQOS
-  chmod 777 /sys/devices/system/cpu/bus_dcvs/DDRQOS/boost_freq
-  echo "1" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/boost_freq
-  chmod 444 /sys/devices/system/cpu/bus_dcvs/DDRQOS/boost_freq
-  chmod 777 /sys/devices/system/cpu/bus_dcvs/DDRQOS/hw_min_freq
-  echo "1" > /sys/devices/system/cpu/bus_dcvs/DDRQOS/hw_min_freq
-  chmod 444 /sys/devices/system/cpu/bus_dcvs/DDRQOS/hw_min_freq
-  # L3
-  chmod 777 /sys/devices/system/cpu/bus_dcvs/L3/boost_freq
-  echo "1804800" > /sys/devices/system/cpu/bus_dcvs/L3/boost_freq
-  chmod 444 /sys/devices/system/cpu/bus_dcvs/L3/boost_freq
-  chmod 777 /sys/devices/system/cpu/bus_dcvs/L3/hw_min_freq
-  echo "1804800" > /sys/devices/system/cpu/bus_dcvs/L3/hw_min_freq
-  chmod 444 /sys/devices/system/cpu/bus_dcvs/L3/hw_min_freq
-  # LLCC
-  chmod 777 /sys/devices/system/cpu/bus_dcvs/LLCC/boost_freq
-  echo "1066000" > /sys/devices/system/cpu/bus_dcvs/LLCC/boost_freq
-  chmod 444 /sys/devices/system/cpu/bus_dcvs/LLCC/boost_freq
-  chmod 777 /sys/devices/system/cpu/bus_dcvs/LLCC/hw_min_freq
-  echo "1066000" > /sys/devices/system/cpu/bus_dcvs/LLCC/hw_min_freq
-  chmod 444 /sys/devices/system/cpu/bus_dcvs/LLCC/hw_min_freq
-  # 设定当大核忙碌程度hispeed_load到达一定值时立刻跳到设定的freq频率
-  chmod 777 /sys/devices/system/cpu/cpu0/cpufreq/walt/hispeed_load
-  echo "30" > /sys/devices/system/cpu/cpu0/cpufreq/walt/hispeed_load
-  chmod 444 /sys/devices/system/cpu/cpu0/cpufreq/walt/hispeed_load
-  # CPU 3
-  chmod 777 /sys/devices/system/cpu/cpu3/cpufreq/walt/hispeed_load
-  echo "40" > /sys/devices/system/cpu/cpu3/cpufreq/walt/hispeed_load
-  chmod 777 /sys/devices/system/cpu/cpu3/cpufreq/walt/hispeed_load
-  # CPU 7
-  chmod 777 /sys/devices/system/cpu/cpu7/cpufreq/walt/hispeed_load
-  echo "55" > /sys/devices/system/cpu/cpu7/cpufreq/walt/hispeed_load
-  chmod 777 /sys/devices/system/cpu/cpu7/cpufreq/walt/hispeed_load
-  # CPU 0
-  # 设定当大核忙碌程度hispeed_load到达一定值时立刻跳到设定的freq频率
-  chmod 777 /sys/devices/system/cpu/cpu0/cpufreq/walt/hispeed_freq
-  echo "2016000" > /sys/devices/system/cpu/cpu0/cpufreq/walt/hispeed_freq
-  chmod 444 /sys/devices/system/cpu/cpu0/cpufreq/walt/hispeed_freq
-  # CPU 3
-  chmod 777 /sys/devices/system/cpu/cpu3/cpufreq/walt/hispeed_freq
-  echo "2803200" > /sys/devices/system/cpu/cpu3/cpufreq/walt/hispeed_freq
-  chmod 777 /sys/devices/system/cpu/cpu3/cpufreq/walt/hispeed_freq
-  # CPU
-  chmod 777 /sys/devices/system/cpu/cpufreq/policy0/walt/boost
-  echo "1" > /sys/devices/system/cpu/cpufreq/policy0/walt/boost
-  chmod 444 /sys/devices/system/cpu/cpufreq/policy0/walt/boost
-  # Policy 3
-  chmod 777 /sys/devices/system/cpu/cpufreq/policy3/walt/boost
-  echo "1" > /sys/devices/system/cpu/cpufreq/policy3/walt/boost
-  chmod 444 /sys/devices/system/cpu/cpufreq/policy3/walt/boost
-  # Policy 7
-  chmod 777 /sys/devices/system/cpu/cpufreq/policy7/walt/boost
-  echo "1" > /sys/devices/system/cpu/cpufreq/policy7/walt/boost
-  chmod 444 /sys/devices/system/cpu/cpufreq/policy7/walt/boost
-  # Policy 0
-  chmod 777 /sys/devices/system/cpu/cpufreq/policy0/walt/adaptive_high_freq
-  echo "1" > /sys/devices/system/cpu/cpufreq/policy0/walt/adaptive_high_freq
-  chmod 444 /sys/devices/system/cpu/cpufreq/policy0/walt/adaptive_high_freq
-  # Policy 3
-  chmod 777 /sys/devices/system/cpu/cpufreq/policy3/walt/adaptive_high_freq
-  echo "1" > /sys/devices/system/cpu/cpufreq/policy3/walt/adaptive_high_freq
-  chmod 444 /sys/devices/system/cpu/cpufreq/policy3/walt/adaptive_high_freq
-  # Policy 7
-  chmod 777 /sys/devices/system/cpu/cpufreq/policy7/walt/adaptive_high_freq
-  echo "1" > /sys/devices/system/cpu/cpufreq/policy7/walt/adaptive_high_freq
-  chmod 444 /sys/devices/system/cpu/cpufreq/policy7/walt/adaptive_high_freq
-  # CoreCTL CPU 0
-  chmod 777 /sys/devices/system/cpu/cpu0/core_ctl/offline_delay_ms
-  echo "0" > /sys/devices/system/cpu/cpu0/core_ctl/offline_delay_ms
-  chmod 444 /sys/devices/system/cpu/cpu0/core_ctl/offline_delay_ms
-  # CoreCTL CPU 3
-  chmod 777 /sys/devices/system/cpu/cpu3/core_ctl/offline_delay_ms
-  echo "0" > /sys/devices/system/cpu/cpu3/core_ctl/offline_delay_ms
-  chmod 444 /sys/devices/system/cpu/cpu3/core_ctl/offline_delay_ms
-  # CoreCTL CPU 7
-  chmod 777 /sys/devices/system/cpu/cpu7/core_ctl/offline_delay_ms
-  echo "0" > /sys/devices/system/cpu/cpu7/core_ctl/offline_delay_ms
-  chmod 444 /sys/devices/system/cpu/cpu7/core_ctl/offline_delay_ms
-  # CoreCTL CPU 0
-  chmod 777 /sys/devices/system/cpu/cpu0/core_ctl/busy_up_thres
-  echo "100 100 100" > /sys/devices/system/cpu/cpu0/core_ctl/busy_up_thres
-  chmod 444 /sys/devices/system/cpu/cpu0/core_ctl/busy_up_thres
-  # CoreCTL CPU 3
-  chmod 777 /sys/devices/system/cpu/cpu3/core_ctl/busy_up_thres
-  echo "100 100 100" > /sys/devices/system/cpu/cpu3/core_ctl/busy_up_thres
-  chmod 444 /sys/devices/system/cpu/cpu3/core_ctl/busy_up_thres
-  # CoreCTL CPU 7
-  chmod 777 /sys/devices/system/cpu/cpu7/core_ctl/busy_up_thres
-  echo "100 100 100" > /sys/devices/system/cpu/cpu7/core_ctl/busy_up_thres
-  chmod 444 /sys/devices/system/cpu/cpu7/core_ctl/busy_up_thres
-  # CoreCTL CPU 0
-  chmod 777 /sys/devices/system/cpu/cpu0/core_ctl/busy_down_thres
-  echo "20 20 20" > /sys/devices/system/cpu/cpu0/core_ctl/busy_down_thres
-  chmod 444 /sys/devices/system/cpu/cpu0/core_ctl/busy_down_thres
-  # CoreCTL CPU 3
-  chmod 777 /sys/devices/system/cpu/cpu3/core_ctl/busy_down_thres
-  echo "25 25 25" > /sys/devices/system/cpu/cpu3/core_ctl/busy_down_thres
-  chmod 444 /sys/devices/system/cpu/cpu3/core_ctl/busy_down_thres
-  # CoreCTL CPU 7
-  chmod 777 /sys/devices/system/cpu/cpu7/core_ctl/busy_down_thres
-  echo "20 20 20" > /sys/devices/system/cpu/cpu7/core_ctl/busy_down_thres
-  chmod 444 /sys/devices/system/cpu/cpu7/core_ctl/busy_down_thres
-  # 设置 GPU 等待时间
-  chmod 777 /sys/class/kgsl/kgsl-3d0/idle_timer
-  echo "120" > /sys/class/kgsl/kgsl-3d0/idle_timer
-  chmod 444 /sys/class/kgsl/kgsl-3d0/idle_timer
-  # 关闭 CPU 动态电压调节的功能
-  echo 0 > /sys/devices/system/cpu/c1dcvs/enable_c1dcvs
-  # 通过DEBUG模式开启 GPU/CPU 加速
-  settings put global enable_gpu_debug_layers 0
-  settings put system debug.composition.type dyn
-  module_log "GPU 加速已开启 (启用DEBUG模式)"
-  echo "1" > /proc/cpu_loading/debug_enable
-  echo "1" > /proc/cpu_loading/uevent_enable
-  echo "68" > /proc/cpu_loading/overThrhld
-  echo "45" > /proc/cpu_loading/underThrhld
-  echo "68" > /proc/cpu_loading/specify_overThrhld
-  echo "7654" > /proc/cpu_loading/specify_cpus
-  module_log "CPU 加速已开启（启用DEBUG模式）"
-  # GPU 优化
-  echo "0" > /sys/class/kgsl/kgsl-3d0/default_pwrlevel
-  echo "3" > /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost
-  # ETO 优化
-  echo "0" > /sys/module/simple_gpu_algorithm/parameters/simple_laziness
-  echo "10000" > /sys/module/simple_gpu_algorithm/parameters/simple_ramp_threshold
-  echo "0" > /sys/module/adreno_idler/parameters/adreno_idler_downdifferential
-  echo "99" > /sys/module/adreno_idler/parameters/adreno_idler_idlewait
-  echo "1000" > /sys/module/adreno_idler/parameters/adreno_idler_idleworkload
-fi
-
-
 # I/O STATS 优化
 echo "0" > /sys/block/dm-0/queue/iostats
-echo "0" > /sys/block/mmcblk0/queue/iostats
-echo "0" > /sys/block/mmcblk0rpmb/queue/iostats
-echo "0" > /sys/block/mmcblk1/queue/iostats
-echo "0" > /sys/block/loop0/queue/iostats
-echo "0" > /sys/block/loop1/queue/iostats
-echo "0" > /sys/block/loop2/queue/iostats
-echo "0" > /sys/block/loop3/queue/iostats
-echo "0" > /sys/block/loop4/queue/iostats
-echo "0" > /sys/block/loop5/queue/iostats
-echo "0" > /sys/block/loop6/queue/iostats
-echo "0" > /sys/block/loop7/queue/iostats
-echo "0" > /sys/block/sda/queue/iostats
 # 页面簇优化
 echo "0" > /proc/sys/vm/page-cluster
 # 内核堆优化
@@ -386,7 +209,7 @@ echo "1" > /sys/class/power_supply/usb/boost_current
 module_log "已开启快充优化"
 
 # TCP 优化
-if [ "$OPTIMIZE_TCP" == "1" ]; then
+if [ "$OPTIMIZE_TCP" == "0" ]; then
   echo "
 net.ipv4.conf.all.route_localnet=1
 net.ipv4.ip_forward = 1
