@@ -87,15 +87,6 @@ fi
 module_log "开机完成，正在读取 config.yaml 配置..."
 
 
-# 调节 CPU 激进度百分比%
-# 前台的应用（100%会把cpu拉满）
-# echo "10" > /dev/stune/foreground/schedtune.boost
-# 显示在上层的应用
-# echo "0" > /dev/stune/top-app/schedtune.boost
-# 用户的后台应用（减少cpu乱跳，省电）
-# echo "0" > /dev/stune/background/schedtune.boost
-
-
 if [ "$PERFORMANCE" == "0" ]; then
   # 设置 CPU 应用分配
   # 用户后台应用
