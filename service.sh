@@ -73,6 +73,7 @@ OPTIMIZE_MODULE=$(read_config "模块日志输出 " "0")
 WIRELESS_ADB=$(read_config "无线ADB调试 " "0")
 # ZRAM 设置
 ZRAM_STATUS=$(read_config "ZRAM状态 " "0")
+
 # 调整模块日志输出
 if [ "$OPTIMIZE_MODULE" == "0" ]; then
   # 判断日志文件是否为已创建
@@ -159,14 +160,25 @@ echo "0" > /proc/sys/kernel/randomize_va_space
 # 禁止压缩不可压缩的进程
 echo "0" > /proc/sys/vm/compact_unevictable_allowed
 
+
+
 # 关闭 ZRAM 减少性能/磁盘损耗
-if [ "$PERFORMANCE" == "0" ]; then
+if [ "$ZRAM_STATUS" == "0" ]; then
   swapoff /dev/block/zram0 2>/dev/null
   swapoff /dev/block/zram1 2>/dev/null
   swapoff /dev/block/zram2 2>/dev/null
   echo "1" > /sys/block/zram0/reset
-  module_log "已禁用系统 ZRAM 压缩内存"
-  
+  module_log "已禁用 ZRAM 压缩内存"
+fi
+# 不关闭 ZRAM
+if [ "$ZRAM_STATUS" == "1" ]; then
+  module_log "未禁用 ZRAM 压缩内存"
+  module_log "当前由系统默认配置"
+fi
+
+# 开启无线 ADB
+if [ "$WIRELESS_ADB" == "0" ]; then
+  setprop service.adb.tcp.port 5555
 
 # 快充优化
 chmod 755 /sys/class/power_supply/*/*
@@ -289,6 +301,5 @@ net.nf_conntrack_max = 262144
   module_log "已开启 TCP 网络优化"
 fi
 
-# Ciallo～ (∠・ω< )⌒☆
 module_log "模块 service.sh 已结束"
 echo "[$(date '+%m-%d %H:%M:%S.%3N')] Ciallo～ (∠・ω< )⌒☆" >> $LOG_FILE
