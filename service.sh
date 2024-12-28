@@ -73,7 +73,8 @@ OPTIMIZE_MODULE=$(read_config "模块日志输出 " "0")
 WIRELESS_ADB=$(read_config "无线ADB调试 " "0")
 # ZRAM 设置
 ZRAM_STATUS=$(read_config "ZRAM状态 " "0")
-
+# 解除安装限制
+INSTALL_STATUS=$(read_config "安装限制状态 " "0")
 # 调整模块日志输出
 if [ "$OPTIMIZE_MODULE" == "0" ]; then
   # 判断日志文件是否为已创建
@@ -177,6 +178,14 @@ fi
 if [ "$WIRELESS_ADB" == "1" ]; then
   module_log "未开启无线 ADB"
 fi
+
+# 解除安装限制
+if [ "$INSTALL_STATUS" == "0" ]; then
+  setprop forbid.install.testapk false
+  
+  module_log ""
+
+
 
 # 快充优化
 chmod 755 /sys/class/power_supply/*/*
