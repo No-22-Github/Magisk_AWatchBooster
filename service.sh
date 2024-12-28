@@ -176,9 +176,16 @@ if [ "$ZRAM_STATUS" == "1" ]; then
   module_log "当前由系统默认配置"
 fi
 
-# 开启无线 ADB
+# 无线 ADB
 if [ "$WIRELESS_ADB" == "0" ]; then
   setprop service.adb.tcp.port 5555
+  stop adbd&&adbd start
+  module_log "已开启 ADB 在 5555 端口"
+fi
+
+if [ "$WIRELESS_ADB" == "1" ]; then
+  module_log "未开启无线 ADB"
+fi
 
 # 快充优化
 chmod 755 /sys/class/power_supply/*/*
