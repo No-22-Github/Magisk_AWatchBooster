@@ -1,4 +1,4 @@
-# Magisk_ZT_Boosted v1.0
+# AWatchBooster v1.0
 # 基于 Magisk-All-In-One v1.3
 # 延迟执行 service.sh 脚本
 # All-In-One v1.0 的 sleep 1m 在某些设备上不太实际
@@ -25,8 +25,8 @@ rm "$test_file"
 
 
 # 定义配置文件路径和日志文件路径
-CONFIG_FILE="/storage/emulated/0/Android/ZT_Boosted/config.yaml"
-LOG_FILE="/storage/emulated/0/Android/ZT_Boosted/config.yaml.log"
+CONFIG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml"
+LOG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
 # 定义 module_log 输出日志函数
 module_log() {
   echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" >> $LOG_FILE
