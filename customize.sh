@@ -12,10 +12,12 @@ ui_print "当前模块版本：v1.0-dev"
     echo '     /___/                          '
 ui_print "博客：no22.top"
 ui_print "################################################################"
+echo -e "手表厂商：$(getprop ro.product.manufacturer)"
 echo -e "系统版本：$(getprop ro.build.display.id)"
+echo -e "运行平台：$(getprop ro.board.platform)"
 ui_print "- 正在释放文件"
 mkdir "/storage/emulated/0/Android/ZT_boost"
-ui_print "- 创建 ZT_Boosted 文件夹"
+ui_print "- 创建 AWatchBooster 文件夹"
 ui_print "- 配置文件与日志位于 /storage/emulated/0/Android/AWatchBooster"
 unzip -o "$ZIPFILE" 'config.yaml' -d "/storage/emulated/0/Android/AWatchBooster/" >&2
 echo "[$(date '+%m-%d %H:%M:%S.%3N')] AWatchBooster v1.0-dev 模块安装成功, 等待重启" >> "/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
