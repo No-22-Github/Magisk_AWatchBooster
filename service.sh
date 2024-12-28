@@ -160,11 +160,13 @@ echo "0" > /proc/sys/kernel/randomize_va_space
 echo "0" > /proc/sys/vm/compact_unevictable_allowed
 
 # 关闭 ZRAM 减少性能/磁盘损耗
-swapoff /dev/block/zram0 2>/dev/null
-swapoff /dev/block/zram1 2>/dev/null
-swapoff /dev/block/zram2 2>/dev/null
-echo "1" > /sys/block/zram0/reset
-module_log "已禁用系统 ZRAM 压缩内存"
+if [ "$PERFORMANCE" == "0" ]; then
+  swapoff /dev/block/zram0 2>/dev/null
+  swapoff /dev/block/zram1 2>/dev/null
+  swapoff /dev/block/zram2 2>/dev/null
+  echo "1" > /sys/block/zram0/reset
+  module_log "已禁用系统 ZRAM 压缩内存"
+  
 
 # 快充优化
 chmod 755 /sys/class/power_supply/*/*
