@@ -182,10 +182,13 @@ fi
 # 解除安装限制
 if [ "$INSTALL_STATUS" == "0" ]; then
   setprop forbid.install.testapk false
-  
-  module_log ""
+  # ⚠️ 待补充
+  module_log "已尝试解除安装限制"
+fi
 
-
+if [ "$INSTALL_STATUS" == "1" ]; then
+  module_log "未解除安装限制"
+fi
 
 # 快充优化
 chmod 755 /sys/class/power_supply/*/*
