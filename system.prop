@@ -1,0 +1,81 @@
+#################
+# 触摸屏优化
+# 提高全局触摸屏响应
+debug.performance.tuning=1
+#################
+# 画面显示优化
+#################
+# 关闭 HW 叠加层
+debug.sf.hw=1
+# 开启硬件加速
+debug.egl.hw=1
+# 解锁 FPS 限制
+debug.gr.swapinterval=0
+# 禁用垂直同步
+debug.hwui.disable_vsync=true
+# 系统低层的深度优化（减少掉帧）
+debug.sf.latch_unsignaled=1
+# 禁用垂直同步
+hwui.disable_vsync=true
+#################
+# 系统优化
+#################
+# 默认关闭定位（免得不必要的耗电）
+ro.gps.agps_provider=0
+# 开启 SDCard 性能优化
+ro.sys.sdcardfs=true
+# 玄学待机省电
+ro.ril.disable.power.collapse=1
+# 开启 KVDCP 快充
+persist.hvdcp.allow_opti=1
+# 关闭内核日志
+persist.sys.offlinelog.kernel=false
+# 禁用 WPA 调试
+persist.wpa_supplicant.debug=false
+# 关闭蓝牙日志
+vendor.bluetooth.startbtlogger=false
+# 开启待机深度睡眠
+pm.sleep_mode=1
+ro.ril.disable.power.collapse=0
+# SQLite 配置
+# 关闭 SQLite 日志
+debug.sqlite.journalmode=OFF
+# 关闭 Wal SQLite 同步模式
+debug.sqlite.wal.syncmode=OFF
+# SQLite 提速（来自水龙）
+debug.sqlite.wal.poolsize=8
+debug.sqlite.wal.syncmode=OFF
+debug.sqlite.journalmode=OFF
+# Logd 配置
+persist.logd.limit=OFF
+persist.logd.size=65536
+persist.logd.size.crash=1M
+persist.logd.size.radio=1M
+persist.logd.size.system=1M
+persist.mm.enable.prefetch=false
+log.tag.stats_log=OFF
+ro.logd.size=64K
+ro.logd.size.stats=64K
+# 系统自带媒体增强
+media.aac_51_output_enabled=true
+media.stagefright.enable-player=true
+media.stagefright.enable-meta=true
+media.stagefright.enable-scan=true
+media.stagefright.enable-http=true
+media.stagefright.enable-fma2dp=true
+media.stagefright.enable-scan=true
+media.swhevccodectype=0
+media.hwhevccodectype=0
+mmp.enable.3g2=true
+mm.enable.smoothstreaming=true
+mm.disable.sec_smoothstreaming=true
+ro.vendor.audio.voice.change.support=true
+# 内存优化
+app_memory_compression=0
+debug.gralloc.enable_fb_ubwc=1
+persist.sys.purgeable_assets=1
+zram_enabled=0
+# CPU 优化
+ro.sf.disable_triple_buffer=0
+# 开启硬件加速
+video.accelerate.hw=1
