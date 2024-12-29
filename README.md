@@ -1,4 +1,4 @@
-# AWatchBooster 安卓手表通用优化模块
+# 𝘼𝙒𝙖𝙩𝙘𝙝𝘽𝙤𝙤𝙨𝙩𝙚𝙧 安卓手表通用优化模块
 基于：https://github.com/JustLikeCheese/Magisk_All-In-One
 精简了原作代码，修改并适配手表，且免配置（大部分情况下）
 
