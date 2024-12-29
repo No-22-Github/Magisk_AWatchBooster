@@ -54,7 +54,7 @@ read_config() {
 # 0: 性能优先
 # 1: 省电优先
 PERFORMANCE=$(read_config "性能调节 " "0")
-
+TEMP_THRESHOLD=$(read_config 
 # 获取 CPU 应用分配
 BACKGROUND=$(read_config "用户后台应用 " "0")
 SYSTEM_BACKGROUND=$(read_config "系统后台应用 " "0")
