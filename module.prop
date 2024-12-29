@@ -1,7 +1,7 @@
 id=AWatchBooster
-name=⚡𝘼𝙒𝙖𝙩𝙘𝙝𝘽𝙤𝙤𝙨𝙩𝙚𝙧⚡
-version=v1.0-dev
+name=𝘼𝙒𝙖𝙩𝙘𝙝𝘽𝙤𝙤𝙨𝙩𝙚𝙧
+version=v1.0-24.12.30
 versionCode=0
 author=酷安@No_22
-description=[安卓手表通用优化|配置文件位于.../Android/AWatchBooster/] QQ群: 824923954 / 屏幕触控优化 / 待机省电 / 提升读写速度 / 优化TCP性能 / 优化CPU核心分配
+description=⚡安卓手表通用优化⚡|配置文件位于.../Android/AWatchBooster/ QQ群: 824923954 
 updateJson=https://github.com/No-22-Github/Magisk_AWatchBooster/raw/main/Magisk_AWatchBooster.json
