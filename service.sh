@@ -303,9 +303,8 @@ net.nf_conntrack_max = 262144
   # 启用自定义配置文件
   sysctl -p /data/sysctl.conf
   # 启用 ip route 配置
-  ip route | while IFS= read -r config; do
-      echo "Processing: $config"  # 用于调试输出
-      ip route change $config initcwnd 20;
+  ip route | while read config; do
+    ip route change $config initcwnd 20;
   done
   # 删除 wlan_logs 网络日志
   rm -rf /data/vendor/wlan_logs
