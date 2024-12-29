@@ -173,8 +173,7 @@ fi
 
 # 无线 ADB
 if [ "$WIRELESS_ADB" == "0" ]; then
-  setprop service.adb.tcp.port 5555
-  stop adbd&&adbd start
+  setprop persist.adb.enable 1 && setprop persist.service.adb.enable 1 && setprop service.adb.tcp.port 5555 && stop adbd && start adbd
   module_log "已开启 ADB 在 5555 端口"
 fi
 
