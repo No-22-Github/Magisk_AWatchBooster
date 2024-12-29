@@ -105,13 +105,13 @@ if [ "$PERFORMANCE" == "0" ]; then
   module_log "- 前台应用: $FOREGROUND"
   module_log "- 上层应用: $SYSTEM_FOREGROUND"
 
-  # 较为轻的温控方案
-  # GPU 温控 115度 极限120 到120会过热保护
-  echo "115000" > /sys/class/thermal/thermal_zone32/trip_point_0_temp
+  # 温控
+  # 60 度开始降频，保护电池
+  echo "60000" > /sys/class/thermal/thermal_zone0/trip_point_0_temp
   # CPU 温控 修改为99度
-  echo "99000" > /sys/class/thermal/thermal_zone36/trip_point_0_temp
+  echo "60000" > /sys/class/thermal/thermal_zone1/trip_point_0_temp
   module_log "- 核心分配优化已开启"
-  module_log "- CPU/GPU 温控优化温控已开启"
+  module_log "- CPU/GPU 温控优化已开启"
   # CPU 调度
   chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
   echo $CPU_SCALING > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
