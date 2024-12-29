@@ -154,7 +154,7 @@ echo "0" > /proc/sys/vm/page-cluster
 echo "0" > /proc/sys/kernel/randomize_va_space
 # 禁止压缩不可压缩的进程
 echo "0" > /proc/sys/vm/compact_unevictable_allowed
-
+module_log "已开启固态&内存优化"
 
 
 # 关闭 ZRAM 减少性能/磁盘损耗
