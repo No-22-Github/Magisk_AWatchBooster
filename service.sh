@@ -54,7 +54,8 @@ read_config() {
 # 0: 性能优先
 # 1: 省电优先
 PERFORMANCE=$(read_config "性能调节 " "0")
-TEMP_THRESHOLD=$(read_config 
+# 获取温控阈值
+TEMP_THRESHOLD=$(read_config "温度控制 " "60")
 # 获取 CPU 应用分配
 BACKGROUND=$(read_config "用户后台应用 " "0")
 SYSTEM_BACKGROUND=$(read_config "系统后台应用 " "0")
@@ -75,6 +76,8 @@ WIRELESS_ADB=$(read_config "无线ADB调试 " "0")
 ZRAM_STATUS=$(read_config "ZRAM状态 " "0")
 # 解除安装限制
 INSTALL_STATUS=$(read_config "安装限制状态 " "0")
+
+
 # 调整模块日志输出
 if [ "$OPTIMIZE_MODULE" == "0" ]; then
   # 判断日志文件是否为已创建
@@ -107,9 +110,9 @@ if [ "$PERFORMANCE" == "0" ]; then
 
   # 温控
   # 60 度开始降频，保护电池
-  echo "60000" > /sys/class/thermal/thermal_zone0/trip_point_0_temp
+  echo $TEMP_THRESHOLD > /sys/class/thermal/thermal_zone0/trip_point_0_temp
   # CPU 温控 修改为99度
-  echo "60000" > /sys/class/thermal/thermal_zone1/trip_point_0_temp
+  echo $TEMP_THRESHOLD > /sys/class/thermal/thermal_zone1/trip_point_0_temp
   module_log "- 核心分配优化已开启"
   module_log "- CPU/GPU 温控优化已开启"
   # CPU 调度
