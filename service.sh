@@ -9,7 +9,7 @@
 
 # 循环判断是否开机
 while [ "$(getprop sys.boot_completed)" != "1" ]; do
-    sleep 3 # 不急
+    sleep 3
 done
 # 创建用于文件权限测试的文件
 test_file="/sdcard/Android/.PERMISSION_TEST"
