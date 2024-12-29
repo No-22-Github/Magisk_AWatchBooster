@@ -234,7 +234,7 @@ module_log "已开启快充优化"
 
 # TCP 优化
 if [ "$OPTIMIZE_TCP" == "0" ]; then
-  cat <<EOF > /data/sysctl.conf
+  echo "
 net.ipv4.conf.all.route_localnet=1
 net.ipv4.ip_forward = 1
 net.ipv4.conf.all.forwarding = 1
@@ -297,27 +297,18 @@ net.ipv6.neigh.default.gc_thresh1=2048
 net.ipv4.tcp_max_syn_backlog = 262144
 net.netfilter.nf_conntrack_max = 262144
 net.nf_conntrack_max = 262144
-EOF
-
+" > /data/sysctl.conf
   # 给予 sysctl.conf 配置文件权限
   chmod 777 /data/sysctl.conf
-
   # 启用自定义配置文件
   sysctl -p /data/sysctl.conf
-
   # 启用 ip route 配置
-  ip route | while read -r config; do
-    ip route change "$config" initcwnd 20
+  ip route | while IFS= read -r config; do
+      echo "Processing: $config"  # 用于调试输出
+      ip route change $config initcwnd 20;
   done
-
   # 删除 wlan_logs 网络日志
-  if [ -d "/data/vendor/wlan_logs" ]; then
-      rm -rf /data/vendor/wlan_logs
-      module_log "已删除 wlan_logs 网络日志"
-  else
-      module_log "未找到 wlan_logs 网络日志"
-  fi
-
+  rm -rf /data/vendor/wlan_logs
   module_log "已开启 TCP 网络优化"
 fi
 
