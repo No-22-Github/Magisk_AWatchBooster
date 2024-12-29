@@ -1,6 +1,5 @@
 ui_print "################################################################"
 ui_print "您正在安装的是 AWatchBooster 安卓手表通用优化模块"
-ui_print "当前模块版本：v1.0-dev"
     echo '   ___ _      __     __      __   ___                __         '
     echo '  / _ | | /| / /__ _/ /_____/ /  / _ )___  ___  ___ / /____ ____'
     echo ' / __ | |/ |/ / _ `/ __/ __/ _ \/ _  / _ \/ _ \(_-</ __/ -_) __/'
@@ -20,7 +19,7 @@ mkdir "/storage/emulated/0/Android/AWatchBooster"
 ui_print "- 创建 AWatchBooster 文件夹"
 ui_print "- 配置文件与日志位于 /storage/emulated/0/Android/AWatchBooster"
 unzip -o "$ZIPFILE" 'config.yaml' -d "/storage/emulated/0/Android/AWatchBooster/" >&2
-echo "[$(date '+%m-%d %H:%M:%S.%3N')] AWatchBooster v1.0-dev 模块安装成功, 等待重启" >> "/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
+echo "[$(date '+%m-%d %H:%M:%S.%3N')] AWatchBooster 模块安装成功, 等待重启" >> "/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
 ui_print "- AWatchBooster 安卓手表通用优化模块"
 ui_print "- 开启无线 ADB / 解除安装限制"
 ui_print "- 针对手表 CPU / GPU / 内存深度优化"
