@@ -312,4 +312,3 @@ net.nf_conntrack_max = 262144
 fi
 
 module_log "模块 service.sh 已结束"
-echo "[$(date '+%m-%d %H:%M:%S.%3N')] Ciallo～ (∠・ω< )⌒☆" >> $LOG_FILE
