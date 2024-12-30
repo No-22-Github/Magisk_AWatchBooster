@@ -302,3 +302,4 @@ fi
 
 module_log "模块 service.sh 已结束"
 module_log "𝘼𝙒𝙖𝙩𝙘𝙝𝘽𝙤𝙤𝙨𝙩𝙚𝙧 优化结束 🚀🚀🚀"
+chmod +x $MODPATH/modify_module_prop.sh && source $MODPATH/modify_module_prop.sh
