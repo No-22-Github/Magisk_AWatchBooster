@@ -55,7 +55,7 @@ read_config() {
 # 1: 省电优先
 PERFORMANCE=$(read_config "性能模式" "0")
 # 获取温控阈值
-TEMP_THRESHOLD=$(read_config "温度控制" "60")
+TEMP_THRESHOLD=$(read_config "温度控制" "6")
 TEMP_THRESHOLD=$((TEMP_THRESHOLD * 10))
 # 获取 CPU 应用分配
 BACKGROUND=$(read_config "用户后台应用" "0")
