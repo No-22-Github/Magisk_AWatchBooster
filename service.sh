@@ -6,8 +6,6 @@
 # while true 嵌套 sleep 1 并不会造成开机卡死
 # 参考如何有效降低死循环的 CPU 占用 - sebastia - 博客园
 # https://www.cnblogs.com/memoryLost/p/10907654.html
-# 获取模块路径
-SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
 # 循环判断是否开机
 while [ "$(getprop sys.boot_completed)" != "1" ]; do
     sleep 3
@@ -306,6 +304,6 @@ module_log "𝘼𝙒𝙖𝙩𝙘𝙝𝘽𝙤𝙤𝙨𝙩𝙚𝙧 优化结束 �
 # 获取当前时间
 current_time=$(date "+%m-%d %H:%M")
 # 在模块启动时删除之前的标记
-sed -i "s/ \[.*🚀优化完毕\]//" $SCRIPT_DIR/module.prop
+sed -i "s/ \[.*🚀优化完毕\]//" "/data/adb/modules/AWatchBooster/module.prop"
 # 修改description，添加结束时间
-sed -i "s/^description=.*/& \[${current_time}🚀优化完毕\]/" $SCRIPT_DIR/module.prop
+sed -i "s/^description=.*/& \[${current_time}🚀优化完毕\]/" "/data/adb/modules/AWatchBooster/module.prop"
