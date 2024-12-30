@@ -302,4 +302,9 @@ fi
 
 module_log "模块 service.sh 已结束"
 module_log "𝘼𝙒𝙖𝙩𝙘𝙝𝘽𝙤𝙤𝙨𝙩𝙚𝙧 优化结束 🚀🚀🚀"
-chmod +x $MODPATH/modify_module_prop.sh && source $MODPATH/modify_module_prop.sh
+# 获取当前时间
+current_time=$(date "+%m-%d %H:%M")
+# 在模块启动时删除之前的标记
+sed -i "s/ \[.*🚀优化完毕\]//" ./module.prop
+# 修改description，添加结束时间
+sed -i "s/^description=.*/& \[${current_time}🚀优化完毕\]/" ./module.prop
