@@ -33,18 +33,18 @@ module_log() {
 }
 # 定义 read_config 读取配置函数，若找不到匹配项，则返回默认值
 read_config() {
-  result=$(awk -v start="$1" '
-    $0 ~ "^" start {
-      sub("^" start, "");
-      print;
-      exit
-    }
-  ' "$CONFIG_FILE")
-  if [ -z "$result" ]; then
-    echo "$2"
-  else
-    echo "$result"
-  fi
+    local param_name="$1"
+    local default_value="$2"
+
+    # 忽略注释行并提取参数值
+    local value=$(grep -v '^#' "$CONFIG_FILE" | grep "^${param_name}_" | cut -d'_' -f2)
+
+    # 检查提取到的值是否为0-9的数字，如果不是，则返回默认值
+    if [[ ! "$value" =~ ^[0-9]$ ]]; then
+        value="$default_value"
+    fi
+
+    echo "$value"
 }
 
 
@@ -53,29 +53,30 @@ read_config() {
 # 获取性能模式
 # 0: 性能优先
 # 1: 省电优先
-PERFORMANCE=$(read_config "性能模式 " "0")
+PERFORMANCE=$(read_config "性能模式" "0")
 # 获取温控阈值
-TEMP_THRESHOLD=$(read_config "温度控制 " "60")
+TEMP_THRESHOLD=$(read_config "温度控制" "60")
+TEMP_THRESHOLD=$((TEMP_THRESHOLD * 10))
 # 获取 CPU 应用分配
-BACKGROUND=$(read_config "用户后台应用 " "0")
-SYSTEM_BACKGROUND=$(read_config "系统后台应用 " "0")
-FOREGROUND=$(read_config "前台应用 " "0-3")
-SYSTEM_FOREGROUND=$(read_config "上层应用 " "0-3")
+BACKGROUND=$(read_config "用户后台应用" "0")
+SYSTEM_BACKGROUND=$(read_config "系统后台应用" "0")
+FOREGROUND=$(read_config "前台应用" "0-3")
+SYSTEM_FOREGROUND=$(read_config "上层应用" "0-3")
 
 # CPU 调度模式 SCALING
 CPU_SCALING="performance"
 
 # 其他选项
 # TCP 网络优化
-OPTIMIZE_TCP=$(read_config "TCP网络优化 " "0")
+OPTIMIZE_TCP=$(read_config "TCP网络优化" "0")
 # 模块日志输出
-OPTIMIZE_MODULE=$(read_config "模块日志输出 " "0")
+OPTIMIZE_MODULE=$(read_config "模块日志输出" "0")
 # 无线 ADB 调试
-WIRELESS_ADB=$(read_config "无线ADB调试 " "0")
+WIRELESS_ADB=$(read_config "无线ADB调试" "0")
 # ZRAM 设置
-ZRAM_STATUS=$(read_config "ZRAM状态 " "0")
+ZRAM_STATUS=$(read_config "ZRAM状态" "0")
 # 解除安装限制
-INSTALL_STATUS=$(read_config "安装限制状态 " "0")
+INSTALL_STATUS=$(read_config "安装限制状态" "0")
 
 
 # 调整模块日志输出
