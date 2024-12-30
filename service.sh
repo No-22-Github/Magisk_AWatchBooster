@@ -37,10 +37,10 @@ read_config() {
     local default_value="$2"
 
     # 忽略注释行并提取参数值
-    local value=$(grep -v '^#' "$CONFIG_FILE" | grep "^${param_name}_" | cut -d'_' -f2)
+    local value=$(grep -v '^#' "$CONFIG_FILE" | grep "^${param_name}_" | cut -d'_' -f2-)
 
-    # 检查提取到的值是否为0-9的数字，如果不是，则返回默认值
-    if [[ ! "$value" =~ ^[0-9]$ ]]; then
+    # 检查是否提取到了值，如果没有则返回默认值
+    if [ -z "$value" ]; then
         value="$default_value"
     fi
 
@@ -55,8 +55,7 @@ read_config() {
 # 1: 省电优先
 PERFORMANCE=$(read_config "性能模式" "0")
 # 获取温控阈值
-TEMP_THRESHOLD=$(read_config "温度控制" "6")
-TEMP_THRESHOLD=$((TEMP_THRESHOLD * 10))
+TEMP_THRESHOLD=$(read_config "温度控制" "60")
 # 获取 CPU 应用分配
 BACKGROUND=$(read_config "用户后台应用" "0")
 SYSTEM_BACKGROUND=$(read_config "系统后台应用" "0")
