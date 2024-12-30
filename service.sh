@@ -180,45 +180,44 @@ if [ "$WIRELESS_ADB" == "1" ]; then
 fi
 
 # 快充优化
-chmod 755 /sys/class/power_supply/*/*
-chmod 755 /sys/module/qpnp_smbcharger/*/*
-chmod 755 /sys/module/dwc3_msm/*/*
-chmod 755 /sys/module/phy_msm_usb/*/*
-echo "1" > /sys/kernel/fast_charge/force_fast_charge
-echo "1" > /sys/kernel/fast_charge/failsafe
-echo "1" > /sys/class/power_supply/battery/allow_hvdcp3
-echo "0" > /sys/class/power_supply/battery/restricted_charging
-echo "0" > /sys/class/power_supply/battery/system_temp_level
-echo "0" > /sys/class/power_supply/battery/input_current_limited
-echo "1" >/sys/class/power_supply/battery/subsystem/usb/pd_allowed
-echo "1" > /sys/class/power_supply/battery/input_current_settled
-echo "100" >/sys/class/power_supply/bms/temp_cool
-echo "600" >/sys/class/power_supply/bms/temp_warm
-echo "30000" > /sys/module/qpnp_smbcharger/parameters/default_hvdcp_icl_ma
-echo "30000" > /sys/module/qpnp_smbcharger/parameters/default_dcp_icl_ma
-echo "30000" > /sys/module/qpnp_smbcharger/parameters/default_hvdcp3_icl_ma
-echo "30000" > /sys/module/dwc3_msm/parameters/dcp_max_current
-echo "30000" > /sys/module/dwc3_msm/parameters/hvdcp_max_current
-echo "30000" > /sys/module/phy_msm_usb/parameters/dcp_max_current
-echo "30000" > /sys/module/phy_msm_usb/parameters/hvdcp_max_current
-echo "30000" > /sys/module/phy_msm_usb/parameters/lpm_disconnect_thresh
-echo "30000000" > /sys/class/power_supply/dc/current_max
-echo "30000000" > /sys/class/power_supply/main/current_max
-echo "30000000" > /sys/class/power_supply/parallel/current_max
-echo "30000000" > /sys/class/power_supply/pc_port/current_max
-echo "30000000" > /sys/class/power_supply/qpnp-dc/current_max
-echo "30000000" > /sys/class/power_supply/battery/current_max
-echo "30000000" > /sys/class/power_supply/battery/input_current_max
-echo "30000000" > /sys/class/power_supply/usb/current_max
-echo "30000000" > /sys/class/power_supply/usb/hw_current_max
-echo "30000000" > /sys/class/power_supply/usb/pd_current_max
-echo "30000000" > /sys/class/power_supply/usb/ctm_current_max
-echo "30000000" > /sys/class/power_supply/usb/sdp_current_max
-echo "30100000" > /sys/class/power_supply/main/constant_charge_current_max
-echo "30100000" > /sys/class/power_supply/parallel/constant_charge_current_max
-echo "30100000" > /sys/class/power_supply/battery/constant_charge_current_max
-echo "31000000" > /sys/class/qcom-battery/restricted_current
-echo "1" > /sys/class/power_supply/usb/boost_current
+chmod 755 /sys/class/*/*/*
+chmod 755 /sys/module/*/*/*
+echo '1' > /sys/kernel/fast_charge/force_fast_charge
+echo '1' > /sys/kernel/fast_charge/failsafe
+echo '1' > /sys/class/power_supply/battery/allow_hvdcp3
+echo '0' > /sys/class/power_supply/battery/restricted_charging
+echo '0' > /sys/class/power_supply/battery/system_temp_level
+echo '0' > /sys/class/power_supply/battery/input_current_limited
+echo '1' >/sys/class/power_supply/battery/subsystem/usb/pd_allowed
+echo '1' > /sys/class/power_supply/battery/input_current_settled
+echo '100' >/sys/class/power_supply/bms/temp_cool
+echo '600' >/sys/class/power_supply/bms/temp_warm
+echo '4000' > /sys/module/qpnp_smbcharger/parameters/default_hvdcp_icl_ma
+echo '4000' > /sys/module/qpnp_smbcharger/parameters/default_dcp_icl_ma
+echo '4000' > /sys/module/qpnp_smbcharger/parameters/default_hvdcp3_icl_ma
+echo '4000' > /sys/module/dwc3_msm/parameters/dcp_max_current
+echo '4000' > /sys/module/dwc3_msm/parameters/hvdcp_max_current
+echo '4000' > /sys/module/phy_msm_usb/parameters/dcp_max_current
+echo '4000' > /sys/module/phy_msm_usb/parameters/hvdcp_max_current
+echo '4000' > /sys/module/phy_msm_usb/parameters/lpm_disconnect_thresh
+echo '4000000' > /sys/class/power_supply/dc/current_max
+echo '4000000' > /sys/class/power_supply/main/current_max
+echo '4000000' > /sys/class/power_supply/parallel/current_max
+echo '4000000' > /sys/class/power_supply/pc_port/current_max
+echo '4000000' > /sys/class/power_supply/qpnp-dc/current_max
+echo '4000000' > /sys/class/power_supply/battery/current_max
+echo '4000000' > /sys/class/power_supply/battery/input_current_max
+echo '4000000' > /sys/class/power_supply/usb/current_max
+echo '4100000' > /sys/class/power_supply/usb/hw_current_max
+echo '4000000' > /sys/class/power_supply/usb/pd_current_max
+echo '4000000' > /sys/class/power_supply/usb/ctm_current_max
+echo '4000000' > /sys/class/power_supply/usb/sdp_current_max
+echo '4100000' > /sys/class/power_supply/main/constant_charge_current_max
+echo '4100000' > /sys/class/power_supply/parallel/constant_charge_current_max
+echo '4100000' > /sys/class/power_supply/battery/constant_charge_current_max
+echo '5000000' > /sys/class/qcom-battery/restricted_current
+echo '1' > /sys/class/power_supply/usb/boost_current
+sleep 1
 module_log "已开启快充优化"
 
 # TCP 优化
