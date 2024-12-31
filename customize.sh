@@ -25,7 +25,7 @@ unzip -o "$ZIPFILE" 'config.yaml' -d "/storage/emulated/0/Android/AWatchBooster/
 
 echo "[$(date '+%m-%d %H:%M:%S.%3N')] AWatchBooster 模块安装成功, 等待重启" >> "/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
 ui_print "- AWatchBooster 安卓手表通用优化模块"
-ui_print "- 开启无线 ADB / 解除安装限制"
+ui_print "- 开启无线 ADB / 关闭 ZRAM"
 ui_print "- 针对手表 CPU / GPU / 内存深度优化"
 ui_print "- 屏幕优化 触控增强 帧率更稳定"
 ui_print "- 网络 TCP 优化 连接更稳定 速率增加"
