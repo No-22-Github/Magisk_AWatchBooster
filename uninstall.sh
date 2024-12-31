@@ -1,1 +1,0 @@
-rm -rf "/storage/emulated/0/Android/AWatchBooster"
