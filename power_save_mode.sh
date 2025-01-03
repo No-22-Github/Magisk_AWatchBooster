@@ -26,7 +26,8 @@ read_config() {
 }
 # 读取设置的检测周期
 CHECK_INTERVAL=$(read_config "检测周期_" "3")
-
+CPU_MAX_FREQ=$(cat "/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_max_freq")
+CPU_MIN_FREQ=$(cat "/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_min_freq")
 while true; do
   SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
   if [ "$SCREEN_STATUS" = "ON" ]; then
