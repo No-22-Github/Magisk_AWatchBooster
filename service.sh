@@ -28,11 +28,7 @@ rm "$test_file"
 # 定义配置文件路径和日志文件路径
 CONFIG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml"
 LOG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
-# 定义 module_log 输出日志函数
-module_log() {
-  echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" >> $LOG_FILE
-  echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" # for debug
-}
+
 # 定义 read_config 读取配置函数，若找不到匹配项，则返回默认值
 read_config() {
   result=$(awk -v start="$1" '
@@ -48,7 +44,14 @@ read_config() {
     echo "$result"
   fi
 }
-
+DEBUG_STATUS=$( read_config "开启Debug输出_" "1" )
+# 定义 module_log 输出日志函数
+module_log() {
+  echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" >> $LOG_FILE
+  if [ "DEBUG_STATUS" = "0" ]
+    echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" # for debug
+  fi
+}
 # 检查日志文件大小
 if [ -f "$LOG_FILE" ] && [ $(stat -c%s "$LOG_FILE") -gt 524288 ]
 then
