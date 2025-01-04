@@ -5,7 +5,6 @@ MODDIR=${0%/*}
 CONFIG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml"
 LOG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
 
-
 # 定义 read_config 读取配置函数，若找不到匹配项，则返回默认值
 read_config() {
   result=$(awk -v start="$1" '
