@@ -48,9 +48,6 @@ MAGNIFICATION=$(read_config "最大倍率_" "30")
 MAX_CHECK_INTERVAL=$(($BASE_CHECK_INTERVAL * $MAGNIFICATION)) # 最大检测间隔时间，单位为秒
 CHECK_INTERVAL=$BASE_CHECK_INTERVAL
 
-# 获取是否开启安卓原生省电模式
-A_POWER_SAVING_MODE=$(read_config "原生省电_" "0")
-
 # 获取 CPU 当前状态信息
 CPU_MAX_FREQ=$(cat "/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_max_freq")
 CPU_MIN_FREQ=$(cat "/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_min_freq")
@@ -77,10 +74,7 @@ while true; do
   SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
   module_log "屏幕状态: $SCREEN_STATUS"
   if [ "$SCREEN_STATUS" = "OFF" ]; then
-    if ["$A_POWER_SAVING_MODE" = "0" ]; then
-      settings put global low_power 1
-      module_log "已开启安卓原生省电模式"
-    fi
+    
     module_log "启用息屏降频省电模式..."
     # 降频到最低
     echo $CPU_MIN_FREQ > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
@@ -101,10 +95,7 @@ while true; do
     fi
   else
     # 退出省电模式
-    if [ "$A_POWER_SAVING_MODE" = "0" ]; then
-      settings put global low_power 0
-      module_log "已关闭安卓原生省电模式"
-    fi
+    
     module_log "退出息屏降频省电模式..."
 
     # 恢复到最大频率和原始CPU集分配
