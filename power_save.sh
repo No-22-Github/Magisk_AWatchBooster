@@ -101,7 +101,7 @@ while true; do
     fi
   else
     # 退出省电模式
-    if ["$A_POWER_SAVING_MODE" = "0" ]; then
+    if [ "$A_POWER_SAVING_MODE" = "0" ]; then
       settings put global low_power 0
       module_log "已关闭安卓原生省电模式"
     fi
