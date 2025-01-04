@@ -68,18 +68,6 @@ module_log "系统后台进程CPU集: $SYSTEM_BACKGROUND"
 module_log "前台进程CPU集: $FOREGROUND"
 module_log "系统前台进程CPU集: $SYSTEM_FOREGROUND"
 
-# 定义函数设置CPU频率和CPU集分配
-set_cpu_freq_and_cpusets() {
-  local freq=$1
-  local cpusets=$2
-  echo $freq > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
-  echo $cpusets > /dev/cpuset/background/cpus
-  echo $cpusets > /dev/cpuset/system-background/cpus
-  echo $cpusets > /dev/cpuset/foreground/cpus
-  echo $cpusets > /dev/cpuset/top-app/cpus
-  module_log "已设置频率到 $freq ，CPU集分配到 $cpusets"
-}
-
 # 使用 trap 捕获信号，确保脚本终止时恢复原始状态
 trap "set_cpu_freq_and_cpusets $CPU_MAX_FREQ '0-$(($(get_cpu_cores) - 1))'; settings put global low_power 1; module_log '脚本终止，已恢复原始状态'; exit" SIGHUP SIGINT SIGTERM
 
@@ -95,7 +83,12 @@ while true; do
     module_log "已启用省电模式"
 
     # 降频到最低
-    set_cpu_freq_and_cpusets $CPU_MIN_FREQ "$POWER_SAVE_CPUS"
+    echo $CPU_MIN_FREQ > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
+    module_log "设置CPU核心分配 $POWER_SAVE_CPUS"
+    echo $POWER_SAVE_CPUS > /dev/cpuset/background/cpus
+    echo $POWER_SAVE_CPUS > /dev/cpuset/system-background/cpus
+    echo $POWER_SAVE_CPUS > /dev/cpuset/foreground/cpus
+    echo $POWER_SAVE_CPUS > /dev/cpuset/top-app/cpus
     sleep $CHECK_INTERVAL
     
     if [ "$ENABLE_GRADUAL" = "0" ]; then
@@ -112,10 +105,12 @@ while true; do
     module_log "已退出省电模式"
 
     # 恢复到最大频率和原始CPU集分配
-    set_cpu_freq_and_cpusets $CPU_MAX_FREQ "$BACKGROUND"
-    set_cpu_freq_and_cpusets $CPU_MAX_FREQ "$SYSTEM_BACKGROUND"
-    set_cpu_freq_and_cpusets $CPU_MAX_FREQ "$FOREGROUND"
-    set_cpu_freq_and_cpusets $CPU_MAX_FREQ "$SYSTEM_FOREGROUND"
+    echo $CPU_MAX_FREQ > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
+    module_log "恢复到最大频率和原始CPU集分配"
+    echo $BACKGROUND > /dev/cpuset/background/cpus
+    echo $SYSTEM_BACKGROUND > /dev/cpuset/system-background/cpus
+    echo $FOREGROUND > /dev/cpuset/foreground/cpus
+    echo $SYSTEM_FOREGROUND > /dev/cpuset/top-app/cpus
     sleep $BASE_CHECK_INTERVAL
     
     # 重置检测间隔和检测次数
