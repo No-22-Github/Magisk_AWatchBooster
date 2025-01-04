@@ -44,7 +44,7 @@ ENABLE_GRADUAL=$(read_config "渐进增加_" "0")
 
 # 读取设置的检测周期
 BASE_CHECK_INTERVAL=$(read_config "检测周期_" "5")
-MAGNIFICATION=$(read_config "最大倍率_" "30")
+MAGNIFICATION=$(read_config "最大倍率_" "50")
 MAX_CHECK_INTERVAL=$(($BASE_CHECK_INTERVAL * $MAGNIFICATION)) # 最大检测间隔时间，单位为秒
 CHECK_INTERVAL=$BASE_CHECK_INTERVAL
 
