@@ -27,6 +27,17 @@ read_config() {
   fi
 }
 
+# 获取CPU核数
+get_cpu_cores() {
+  nproc
+}
+
+# 根据CPU核数动态分配省电模式的CPU
+set_power_save_cpus() {
+  cpu_cores=$(get_cpu_cores)
+  echo "0-$(($cpu_cores - 1))"
+}
+
 # 修改权限为644
 chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
 chmod 644 /dev/cpuset/background/cpus
@@ -76,10 +87,13 @@ set_cpu_freq_and_cpusets() {
 }
 
 # 使用 trap 捕获信号，确保脚本终止时恢复原始状态
-trap "set_cpu_freq_and_cpusets $CPU_MAX_FREQ '0-3'; settings put global low_power 0; module_log '脚本终止，已恢复原始状态'; exit" SIGHUP SIGINT SIGTERM
+trap "set_cpu_freq_and_cpusets $CPU_MAX_FREQ '0-$(($(get_cpu_cores) - 1))'; settings put global low_power 1; module_log '脚本终止，已恢复原始状态'; exit" SIGHUP SIGINT SIGTERM
 
 # 初始化检测次数计数器
 CHECK_COUNT=0
+
+# 动态获取省电模式的CPU集
+POWER_SAVE_CPUS=$(set_power_save_cpus)
 
 while true; do
   SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
@@ -90,7 +104,7 @@ while true; do
     module_log "已启用省电模式"
 
     # 降频到最低
-    set_cpu_freq_and_cpusets $CPU_MIN_FREQ "0-3"
+    set_cpu_freq_and_cpusets $CPU_MIN_FREQ "$POWER_SAVE_CPUS"
     sleep $CHECK_INTERVAL
     
     if [ "$ENABLE_GRADUAL" = "0" ]; then
@@ -107,13 +121,10 @@ while true; do
     module_log "已退出省电模式"
 
     # 恢复到最大频率和原始CPU集分配
-    echo $CPU_MAX_FREQ > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
-    echo $BACKGROUND > /dev/cpuset/background/cpus
-    echo $SYSTEM_BACKGROUND > /dev/cpuset/system-background/cpus
-    echo $FOREGROUND > /dev/cpuset/foreground/cpus
-    echo $SYSTEM_FOREGROUND > /dev/cpuset/top-app/cpus
-    module_log "已恢复到最大频率和原始CPU集分配"
-    
+    set_cpu_freq_and_cpusets $CPU_MAX_FREQ "$BACKGROUND"
+    set_cpu_freq_and_cpusets $CPU_MAX_FREQ "$SYSTEM_BACKGROUND"
+    set_cpu_freq_and_cpusets $CPU_MAX_FREQ "$FOREGROUND"
+    set_cpu_freq_and_cpusets $CPU_MAX_FREQ "$SYSTEM_FOREGROUND"
     sleep $BASE_CHECK_INTERVAL
     
     # 重置检测间隔和检测次数
