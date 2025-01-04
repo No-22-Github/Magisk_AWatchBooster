@@ -308,10 +308,10 @@ net.nf_conntrack_max = 262144
   module_log "已开启 TCP 网络优化"
 fi
 # 息屏降频省电
-if ["$POWER_SAVE" = "0"]; then
-  sh "$MODDIR/power_save.sh"
+if [ "$POWER_SAVE" = "0" ]; then
+  sh "$MODDIR/power_save.sh" &
   module_log "已开启息屏降频省电功能"
-if
+fi
 module_log "模块 service.sh 已结束"
 module_log "𝘼𝙒𝙖𝙩𝙘𝙝𝘽𝙤𝙤𝙨𝙩𝙚𝙧 优化结束 🚀🚀🚀"
 
