@@ -1,7 +1,7 @@
 id=AWatchBooster
 name=𝘼𝙒𝙖𝙩𝙘𝙝𝘽𝙤𝙤𝙨𝙩𝙚𝙧
 version=v1.1-dev
-versionCode=0
+versionCode=1
 author=酷安@No_22
 description=⚡安卓手表通用优化⚡ | QQ群: 824923954 | 配置&日志文件位于/storage/emulated/0/Android/AWatchBooster/
 updateJson=https://github.com/No-22-Github/Magisk_AWatchBooster/raw/main/Magisk_AWatchBooster.json
