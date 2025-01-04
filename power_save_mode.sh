@@ -28,6 +28,10 @@ read_config() {
 CHECK_INTERVAL=$(read_config "检测周期_" "3")
 CPU_MAX_FREQ=$(cat "/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_max_freq")
 CPU_MIN_FREQ=$(cat "/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_min_freq")
+BACKGROUND=$(cat "/dev/cpuset/background/cpus")
+SYSTEM_BACKGROUND=$(cat "/dev/cpuset/system-background/cpus")
+FOREGROUND=$(cat "/dev/cpuset/foreground/cpus")
+SYSTEM_FOREGROUND=$(cat "/dev/cpuset/top-app/cpus")
 while true; do
   SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
   if [ "$SCREEN_STATUS" = "ON" ]; then
