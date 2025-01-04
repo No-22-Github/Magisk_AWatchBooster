@@ -40,7 +40,7 @@ chmod 644 /dev/cpuset/foreground/cpus
 chmod 644 /dev/cpuset/top-app/cpus
 
 # 读取是否开启渐进周期的设置
-ENABLE_GRADUAL=$(read_config "渐进周期_" "0")
+ENABLE_GRADUAL=$(read_config "渐进增加_" "0")
 
 # 读取设置的检测周期
 BASE_CHECK_INTERVAL=$(read_config "检测周期_" "5")
@@ -49,7 +49,7 @@ MAX_CHECK_INTERVAL=$(($BASE_CHECK_INTERVAL * $MAGNIFICATION)) # 最大检测间�
 CHECK_INTERVAL=$BASE_CHECK_INTERVAL
 
 # 获取是否开启安卓原生省电模式
-A_POWER_SAVING_MODE=$(read_config "原生省电_" "1")
+A_POWER_SAVING_MODE=$(read_config "原生省电_" "0")
 
 # 获取 CPU 当前状态信息
 CPU_MAX_FREQ=$(cat "/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_max_freq")
