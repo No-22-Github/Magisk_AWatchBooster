@@ -27,16 +27,10 @@ read_config() {
   fi
 }
 
-# 获取CPU核数
-get_cpu_cores() {
-  nproc
-}
+module_log "正在启动息屏降频功能..."
 
-# 根据CPU核数动态分配省电模式的CPU
-set_power_save_cpus() {
-  cpu_cores=$(get_cpu_cores)
-  echo "0-$(($cpu_cores - 1))"
-}
+# 获取CPU核数，设置省电模式CPU分配
+POWER_SAVE_CPUS="0-$(($(grep -c ^processor /proc/cpuinfo) - 1))"
 
 # 修改权限为644
 chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
@@ -45,7 +39,7 @@ chmod 644 /dev/cpuset/system-background/cpus
 chmod 644 /dev/cpuset/foreground/cpus
 chmod 644 /dev/cpuset/top-app/cpus
 
-module_log "正在启动息屏降频功能..."
+
 
 # 读取设置的检测周期
 BASE_CHECK_INTERVAL=$(read_config "检测周期_" "3")
@@ -91,9 +85,6 @@ trap "set_cpu_freq_and_cpusets $CPU_MAX_FREQ '0-$(($(get_cpu_cores) - 1))'; sett
 
 # 初始化检测次数计数器
 CHECK_COUNT=0
-
-# 动态获取省电模式的CPU集
-POWER_SAVE_CPUS=$(set_power_save_cpus)
 
 while true; do
   SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
