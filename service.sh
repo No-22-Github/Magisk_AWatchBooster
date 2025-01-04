@@ -43,10 +43,8 @@ read_config() {
     echo "$result"
   fi
 }
-DEBUG_STATUS=$( read_config "开启Debug输出_" "1" )
+DEBUG_STATUS=$(read_config "开启Debug输出_" "1" )
 # 定义 module_log 输出日志函数
-module_log() {
-  echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" >> $LOG_FILE
 module_log() {
   echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" >> $LOG_FILE
   if [ "$DEBUG_STATUS" = "0" ]; then
@@ -101,6 +99,11 @@ fi
 # 输出日志
 module_log "开机完成，正在读取 config.yaml 配置..."
 
+chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
+chmod 644 /dev/cpuset/background/cpus
+chmod 644 /dev/cpuset/system-background/cpus
+chmod 644 /dev/cpuset/foreground/cpus
+chmod 644 /dev/cpuset/top-app/cpus
 
 if [ "$PERFORMANCE" == "0" ]; then
   # 设置 CPU 应用分配
