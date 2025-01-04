@@ -73,10 +73,7 @@ while true; do
   SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
   module_log "屏幕状态: $SCREEN_STATUS"
   if [ "$SCREEN_STATUS" = "OFF" ]; then
-    # 启用省电模式
-    settings put global low_power 0
     module_log "已启用省电模式"
-
     # 降频到最低
     echo $CPU_MIN_FREQ > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
     module_log "设置CPU核心分配 $POWER_SAVE_CPUS"
