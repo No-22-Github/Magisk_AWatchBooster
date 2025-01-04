@@ -30,7 +30,7 @@ module_log() {
   fi
 }
 module_log "正在启动息屏降频功能..."
-
+sleep 30
 # 获取CPU核数，设置省电模式CPU分配
 POWER_SAVE_CPUS="0-$(($(grep -c ^processor /proc/cpuinfo) - 1))"
 
