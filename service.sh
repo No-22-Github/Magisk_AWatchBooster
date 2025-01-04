@@ -47,7 +47,9 @@ DEBUG_STATUS=$( read_config "开启Debug输出_" "1" )
 # 定义 module_log 输出日志函数
 module_log() {
   echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" >> $LOG_FILE
-  if [ "DEBUG_STATUS" = "0" ]
+module_log() {
+  echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" >> $LOG_FILE
+  if [ "$DEBUG_STATUS" = "0" ]; then
     echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" # for debug
   fi
 }
