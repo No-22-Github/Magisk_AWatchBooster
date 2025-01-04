@@ -82,6 +82,8 @@ OPTIMIZE_MODULE=$(read_config "模块日志输出_" "0")
 WIRELESS_ADB=$(read_config "无线ADB调试_" "0")
 # ZRAM 设置
 ZRAM_STATUS=$(read_config "ZRAM状态_" "0")
+# 息屏降频省电功能
+POWER_SAVE=$(read_config "息屏降频_" "0")
 
 # 调整模块日志输出
 if [ "$OPTIMIZE_MODULE" == "0" ]; then
@@ -305,7 +307,11 @@ net.nf_conntrack_max = 262144
   rm -rf /data/vendor/wlan_logs
   module_log "已开启 TCP 网络优化"
 fi
-
+# 息屏降频省电
+if ["$POWER_SAVE" = "0"]; then
+  sh "$MODDIR/power_save.sh"
+  module_log "已开启息屏降频省电功能"
+if
 module_log "模块 service.sh 已结束"
 module_log "𝘼𝙒𝙖𝙩𝙘𝙝𝘽𝙤𝙤𝙨𝙩𝙚𝙧 优化结束 🚀🚀🚀"
 
