@@ -24,7 +24,6 @@ done
 # 删除测试文件
 rm "$test_file"
 
-
 # 定义配置文件路径和日志文件路径
 CONFIG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml"
 LOG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
@@ -315,6 +314,14 @@ if [ "$POWER_SAVE" = "0" ]; then
   sh "$MODDIR/power_save.sh" &
   module_log "已开启息屏降频省电功能"
 fi
+# 通过DEBUG模式开启GPU加速
+settings put global enable_gpu_debug_layers 0
+settings put system debug.composition.type dyn
+module_log "已通过DEBUG模式开启GPU加速"
+# 通过UBWC降低屏幕功耗
+settings put global debug.gralloc.enable_fb_ubwc 1
+module_log "已通过UBWC降低屏幕功耗"
+
 module_log "模块 service.sh 已结束"
 module_log "𝘼𝙒𝙖𝙩𝙘𝙝𝘽𝙤𝙤𝙨𝙩𝙚𝙧 优化结束 🚀🚀🚀"
 
