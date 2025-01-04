@@ -39,13 +39,14 @@ chmod 644 /dev/cpuset/system-background/cpus
 chmod 644 /dev/cpuset/foreground/cpus
 chmod 644 /dev/cpuset/top-app/cpus
 
-# 读取设置的检测周期
-BASE_CHECK_INTERVAL=$(read_config "检测周期_" "3")
-MAX_CHECK_INTERVAL=$(($BASE_CHECK_INTERVAL * 30)) # 最大检测间隔时间，单位为秒
-CHECK_INTERVAL=$BASE_CHECK_INTERVAL
-
 # 读取是否开启渐进周期的设置
 ENABLE_GRADUAL=$(read_config "渐进周期_" "0")
+
+# 读取设置的检测周期
+BASE_CHECK_INTERVAL=$(read_config "检测周期_" "5")
+MAGNIFICATION=$(read_config "最大倍率_" "30")
+MAX_CHECK_INTERVAL=$(($BASE_CHECK_INTERVAL * $MAGNIFICATION)) # 最大检测间隔时间，单位为秒
+CHECK_INTERVAL=$BASE_CHECK_INTERVAL
 
 # 获取 CPU 当前状态信息
 CPU_MAX_FREQ=$(cat "/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_max_freq")
