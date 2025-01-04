@@ -49,7 +49,13 @@ read_config() {
   fi
 }
 
-
+# 检查日志文件大小
+if [ -f "$LOG_FILE" ] && [ $(stat -c%s "$LOG_FILE") -gt 524288 ]
+then
+  # 删除文件
+  rm "$LOG_FILE"
+  module_log "日志文件达到 512KB 重新创建"
+fi
 # 读取 config.yaml 配置
 
 # 获取性能模式
