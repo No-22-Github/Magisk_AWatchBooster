@@ -39,8 +39,6 @@ chmod 644 /dev/cpuset/system-background/cpus
 chmod 644 /dev/cpuset/foreground/cpus
 chmod 644 /dev/cpuset/top-app/cpus
 
-
-
 # 读取设置的检测周期
 BASE_CHECK_INTERVAL=$(read_config "检测周期_" "3")
 MAX_CHECK_INTERVAL=$(($BASE_CHECK_INTERVAL * 30)) # 最大检测间隔时间，单位为秒
@@ -67,9 +65,6 @@ module_log "后台进程CPU集: $BACKGROUND"
 module_log "系统后台进程CPU集: $SYSTEM_BACKGROUND"
 module_log "前台进程CPU集: $FOREGROUND"
 module_log "系统前台进程CPU集: $SYSTEM_FOREGROUND"
-
-# 使用 trap 捕获信号，确保脚本终止时恢复原始状态
-trap "set_cpu_freq_and_cpusets $CPU_MAX_FREQ '0-$(($(get_cpu_cores) - 1))'; settings put global low_power 1; module_log '脚本终止，已恢复原始状态'; exit" SIGHUP SIGINT SIGTERM
 
 # 初始化检测次数计数器
 CHECK_COUNT=0
@@ -118,3 +113,14 @@ while true; do
     CHECK_COUNT=0
   fi
 done
+# 使用 trap 捕获信号，确保脚本终止时恢复原始状态
+trap "
+  echo $CPU_MAX_FREQ > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
+  echo $BACKGROUND > /dev/cpuset/background/cpus
+  echo $SYSTEM_BACKGROUND > /dev/cpuset/system-background/cpus
+  echo $FOREGROUND > /dev/cpuset/foreground/cpus
+  echo $SYSTEM_FOREGROUND > /dev/cpuset/top-app/cpus
+  settings put global low_power 1
+  module_log '脚本终止，已恢复原始状态'
+  exit
+" SIGHUP SIGINT SIGTERM
