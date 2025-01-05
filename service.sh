@@ -73,7 +73,7 @@ FOREGROUND=$(read_config "前台应用_" "0-3")
 SYSTEM_FOREGROUND=$(read_config "上层应用_" "0-3")
 
 # CPU 调度模式 SCALING
-CPU_SCALING="performance"
+CPU_SCALING="interactive"
 
 # 其他选项
 # TCP 网络优化
@@ -125,7 +125,6 @@ if [ "$PERFORMANCE" == "0" ]; then
   # 温控
   # 60 度开始降频，保护电池
   echo $TEMP_THRESHOLD > /sys/class/thermal/thermal_zone0/trip_point_0_temp
-  # CPU 温控 修改为99度
   echo $TEMP_THRESHOLD > /sys/class/thermal/thermal_zone1/trip_point_0_temp
   module_log "- 核心分配优化已开启"
   module_log "- CPU/GPU 温控优化已开启"
@@ -142,7 +141,7 @@ if [ "$PERFORMANCE" == "1" ]; then
   # 设置 CPU 应用分配
   echo "0" > /dev/cpuset/background/cpus
   # 系统后台应用
-  echo "0" > /dev/cpuset/system-background/cpus
+  echo "1" > /dev/cpuset/system-background/cpus
   # 前台应用
   echo "0-3" > /dev/cpuset/foreground/cpus
   # 上层应用
