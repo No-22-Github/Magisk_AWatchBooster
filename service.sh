@@ -58,6 +58,18 @@ then
   rm "$LOG_FILE"
   module_log "日志文件达到 512KB 及以上 已重新创建"
 fi
+
+# 彩蛋
+# 获取一个0到9之间的随机数
+rand_num=$((RANDOM % 10))
+if [ "$rand_num" -eq 0 ]; then
+  # 彩蛋触发
+  sed -i 's/^description=.*/description=喵喵喵~模块被猫咪吃掉了🐾/' "$MODDIR/module.prop"
+  module_log "喵喵喵~模块被猫咪吃掉了🐾"
+  else
+  sed -i 's/^description=.*/description=⚡安卓手表通用优化⚡ | QQ群: 824923954 | 配置&日志文件位于/storage/emulated/0/Android/AWatchBooster/ /' "$MODDIR/module.prop"
+fi
+
 # 读取 config.yaml 配置
 
 # 获取性能模式
