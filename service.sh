@@ -46,7 +46,7 @@ read_config() {
 DEBUG_STATUS=$(read_config "开启Debug输出_" "1" )
 # 定义 module_log 输出日志函数
 module_log() {
-  echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" >> $LOG_FILE
+  echo "[$(date '+%m-%d %H:%M:%S')] $1" >> $LOG_FILE
   if [ "$DEBUG_STATUS" = "0" ]; then
     echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" # for debug
   fi
@@ -56,7 +56,7 @@ if [ -f "$LOG_FILE" ] && [ $(stat -c%s "$LOG_FILE") -gt 524288 ]
 then
   # 删除文件
   rm "$LOG_FILE"
-  module_log "日志文件达到 512KB 重新创建"
+  module_log "日志文件达到 512KB 及以上 已重新创建"
 fi
 # 读取 config.yaml 配置
 
@@ -152,7 +152,12 @@ if [ "$PERFORMANCE" == "1" ]; then
   module_log "- 系统的后台应用: 0"
   module_log "- 前台应用: 0-3"
   module_log "- 上层应用: 2-3"
-  
+  # 温控
+  # 60 度开始降频，保护电池
+  echo $TEMP_THRESHOLD > /sys/class/thermal/thermal_zone0/trip_point_0_temp
+  echo $TEMP_THRESHOLD > /sys/class/thermal/thermal_zone1/trip_point_0_temp
+  module_log "- 核心分配优化已开启"
+  module_log "- CPU/GPU 温控优化已开启"
   # CPU 调度
   chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
   echo "sprdemand" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
@@ -195,46 +200,50 @@ if [ "$WIRELESS_ADB" == "1" ]; then
 fi
 
 # 快充优化
-chmod 755 /sys/class/*/*/*
-chmod 755 /sys/module/*/*/*
-echo '1' > /sys/kernel/fast_charge/force_fast_charge
-echo '1' > /sys/kernel/fast_charge/failsafe
-echo '1' > /sys/class/power_supply/battery/allow_hvdcp3
-echo '0' > /sys/class/power_supply/battery/restricted_charging
-echo '0' > /sys/class/power_supply/battery/system_temp_level
-echo '0' > /sys/class/power_supply/battery/input_current_limited
-echo '1' >/sys/class/power_supply/battery/subsystem/usb/pd_allowed
-echo '1' > /sys/class/power_supply/battery/input_current_settled
-echo '100' >/sys/class/power_supply/bms/temp_cool
-echo '600' >/sys/class/power_supply/bms/temp_warm
-echo '4000' > /sys/module/qpnp_smbcharger/parameters/default_hvdcp_icl_ma
-echo '4000' > /sys/module/qpnp_smbcharger/parameters/default_dcp_icl_ma
-echo '4000' > /sys/module/qpnp_smbcharger/parameters/default_hvdcp3_icl_ma
-echo '4000' > /sys/module/dwc3_msm/parameters/dcp_max_current
-echo '4000' > /sys/module/dwc3_msm/parameters/hvdcp_max_current
-echo '4000' > /sys/module/phy_msm_usb/parameters/dcp_max_current
-echo '4000' > /sys/module/phy_msm_usb/parameters/hvdcp_max_current
-echo '4000' > /sys/module/phy_msm_usb/parameters/lpm_disconnect_thresh
-echo '4000000' > /sys/class/power_supply/dc/current_max
-echo '4000000' > /sys/class/power_supply/main/current_max
-echo '4000000' > /sys/class/power_supply/parallel/current_max
-echo '4000000' > /sys/class/power_supply/pc_port/current_max
-echo '4000000' > /sys/class/power_supply/qpnp-dc/current_max
-echo '4000000' > /sys/class/power_supply/battery/current_max
-echo '4000000' > /sys/class/power_supply/battery/input_current_max
-echo '4000000' > /sys/class/power_supply/usb/current_max
-echo '4100000' > /sys/class/power_supply/usb/hw_current_max
-echo '4000000' > /sys/class/power_supply/usb/pd_current_max
-echo '4000000' > /sys/class/power_supply/usb/ctm_current_max
-echo '4000000' > /sys/class/power_supply/usb/sdp_current_max
-echo '4100000' > /sys/class/power_supply/main/constant_charge_current_max
-echo '4100000' > /sys/class/power_supply/parallel/constant_charge_current_max
-echo '4100000' > /sys/class/power_supply/battery/constant_charge_current_max
-echo '5000000' > /sys/class/qcom-battery/restricted_current
-echo '1' > /sys/class/power_supply/usb/boost_current
-sleep 1
+chmod 755 /sys/class/power_supply/*/*
+chmod 755 /sys/module/qpnp_smbcharger/*/*
+chmod 755 /sys/module/dwc3_msm/*/*
+chmod 755 /sys/module/phy_msm_usb/*/*
+echo "1" > /sys/kernel/fast_charge/force_fast_charge
+echo "1" > /sys/kernel/fast_charge/failsafe
+echo "1" > /sys/class/power_supply/battery/allow_hvdcp3
+echo "0" > /sys/class/power_supply/battery/restricted_charging
+echo "0" > /sys/class/power_supply/battery/system_temp_level
+echo "0" > /sys/class/power_supply/battery/input_current_limited
+echo "1" > /sys/class/power_supply/battery/subsystem/usb/pd_allowed
+echo "1" > /sys/class/power_supply/battery/input_current_settled
+echo "0" > /sys/class/power_supply/battery/input_suspend
+echo "1" > /sys/class/power_supply/battery/battery_charging_enabled
+echo "1" > /sys/class/power_supply/usb/boost_current
+echo "100" >/sys/class/power_supply/bms/temp_cool
+echo "600" >/sys/class/power_supply/bms/temp_warm
+echo "30000" > /sys/module/qpnp_smbcharger/parameters/default_hvdcp_icl_ma
+echo "30000" > /sys/module/qpnp_smbcharger/parameters/default_dcp_icl_ma
+echo "30000" > /sys/module/qpnp_smbcharger/parameters/default_hvdcp3_icl_ma
+echo "30000" > /sys/module/dwc3_msm/parameters/dcp_max_current
+echo "30000" > /sys/module/dwc3_msm/parameters/hvdcp_max_current
+echo "30000" > /sys/module/phy_msm_usb/parameters/dcp_max_current
+echo "30000" > /sys/module/phy_msm_usb/parameters/hvdcp_max_current
+echo "30000" > /sys/module/phy_msm_usb/parameters/lpm_disconnect_thresh
+echo "12000000" > /sys/class/power_supply/battery/fast_charge_current
+echo "12000000" > /sys/class/power_supply/battery/thermal_input_current
+echo "30000000" > /sys/class/power_supply/dc/current_max
+echo "30000000" > /sys/class/power_supply/main/current_max
+echo "30000000" > /sys/class/power_supply/parallel/current_max
+echo "30000000" > /sys/class/power_supply/pc_port/current_max
+echo "30000000" > /sys/class/power_supply/qpnp-dc/current_max
+echo "30000000" > /sys/class/power_supply/battery/current_max
+echo "30000000" > /sys/class/power_supply/battery/input_current_max
+echo "30000000" > /sys/class/power_supply/usb/current_max
+echo "30000000" > /sys/class/power_supply/usb/hw_current_max
+echo "30000000" > /sys/class/power_supply/usb/pd_current_max
+echo "30000000" > /sys/class/power_supply/usb/ctm_current_max
+echo "30000000" > /sys/class/power_supply/usb/sdp_current_max
+echo "30100000" > /sys/class/power_supply/main/constant_charge_current_max
+echo "30100000" > /sys/class/power_supply/parallel/constant_charge_current_max
+echo "30100000" > /sys/class/power_supply/battery/constant_charge_current_max
+echo "31000000" > /sys/class/qcom-battery/restricted_current
 module_log "已开启快充优化"
-
 # TCP 优化
 if [ "$OPTIMIZE_TCP" == "0" ]; then
   echo "
