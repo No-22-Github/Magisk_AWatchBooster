@@ -74,8 +74,9 @@ fi
 
 # 获取性能模式
 # 0: 性能优先
-# 1: 省电优先
-PERFORMANCE=$(read_config "性能模式_" "0")
+# 1: 均衡模式
+# 2: 省电模式
+PERFORMANCE=$(read_config "性能模式_" "1")
 # 获取温控阈值
 TEMP_THRESHOLD=$(read_config "温度控制_" "60")
 # 获取 CPU 应用分配
@@ -106,7 +107,18 @@ else
 fi
 
 # 输出日志
-module_log "开机完成，正在读取 config.yaml 配置..."
+module_log "开机完成，已获取到 config.yaml 配置..."
+
+# 选择 CPU 调速器
+if [ "PERFORMANCE" == "0" ]; then
+  CPU_SCALING="performance"
+elif [ "PERFORMANCE" == "1" ]; then
+  CPU_SCALING="interactive"
+elif [ "PERFORMANCE" == "2" ]; then
+  CPU_SCALING="sprdemand"
+else
+  CPU_SCALING="interactive"
+fi
 
 chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
 chmod 644 /dev/cpuset/background/cpus
@@ -139,7 +151,8 @@ if [ "$PERFORMANCE" == "0" ]; then
   module_log "- CPU/GPU 温控优化已开启"
   # CPU 调度
   chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
-  echo "interactive" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+  echo "$CPU_SCALING" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+  CPU_SCALING_UPPERCASE=$(echo "$CPU_SCALING" | tr '[:lower:]' '[:upper:]')
   module_log "CPU 调度模式为 ${CPU_SCALING_UPPERCASE} 性能模式"
 fi
 
@@ -167,8 +180,9 @@ if [ "$PERFORMANCE" == "1" ]; then
   module_log "- CPU/GPU 温控优化已开启"
   # CPU 调度
   chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
-  echo "sprdemand" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
-  module_log "CPU 调度模式为 SPRDEMAND 节电模式"
+  echo "$CPU_SCALING" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+  CPU_SCALING_UPPERCASE=$(echo "$CPU_SCALING" | tr '[:lower:]' '[:upper:]')
+  module_log "CPU 调度模式为 ${CPU_SCALING_UPPERCASE} 性能模式"
 fi
 
 # I/O STATS 优化
