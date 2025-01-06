@@ -15,7 +15,6 @@ echo -e "手表厂商：$(getprop ro.product.manufacturer)"
 echo -e "系统版本：$(getprop ro.build.display.id)"
 echo -e " 处理器 ：$(getprop ro.board.platform)"
 ui_print "- 正在释放文件"
-
 # 使用 -p 参数来确保目录已存在或成功创建
 mkdir -p "/storage/emulated/0/Android/AWatchBooster"
 ui_print "- 创建 AWatchBooster 文件夹"
