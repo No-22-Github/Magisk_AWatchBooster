@@ -84,9 +84,6 @@ SYSTEM_BACKGROUND=$(read_config "系统后台应用_" "0")
 FOREGROUND=$(read_config "前台应用_" "0-3")
 SYSTEM_FOREGROUND=$(read_config "上层应用_" "0-3")
 
-# CPU 调度模式 SCALING
-CPU_SCALING="interactive"
-
 # 其他选项
 # TCP 网络优化
 OPTIMIZE_TCP=$(read_config "TCP网络优化_" "0")
@@ -105,7 +102,7 @@ if [ "$OPTIMIZE_MODULE" == "0" ]; then
   # 已创建则在文件末尾添加换行
   [ -f $LOG_FILE ] && echo "" >> $LOG_FILE
 else
-  LOG_FILE = "/dev/null"
+  LOG_FILE="/dev/null"
 fi
 
 # 输出日志
@@ -142,9 +139,7 @@ if [ "$PERFORMANCE" == "0" ]; then
   module_log "- CPU/GPU 温控优化已开启"
   # CPU 调度
   chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
-  echo $CPU_SCALING > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
-  # 将 CPU_SCALING 模式转换为大写字符串并输出
-  CPU_SCALING_UPPERCASE=$(echo "$CPU_SCALING" | tr '[:lower:]' '[:upper:]')
+  echo "interactive" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
   module_log "CPU 调度模式为 ${CPU_SCALING_UPPERCASE} 性能模式"
 fi
 
