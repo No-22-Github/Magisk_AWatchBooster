@@ -43,6 +43,7 @@ chmod 644 /dev/cpuset/top-app/cpus
 
 # 读取是否开启渐进周期的设置
 ENABLE_GRADUAL=$(read_config "渐进增加_" "0")
+DELAYED_WEAKUP=$(read_config "延迟唤醒_" "1")
 
 # 读取设置的检测周期
 BASE_CHECK_INTERVAL=$(read_config "检测周期_" "5")
