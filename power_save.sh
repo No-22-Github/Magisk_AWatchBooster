@@ -78,7 +78,7 @@ module_log "系统前台进程CPU集: $SYSTEM_FOREGROUND"
 # 初始化检测次数计数器
 CHECK_COUNT=0
 # 初始化延迟次数计数器
-DELAY_COUNT=0
+DELAY_COUNT=1
 while true; do
   SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
   module_log "屏幕状态: $SCREEN_STATUS"
