@@ -24,9 +24,9 @@ read_config() {
 DEBUG_STATUS=$(read_config "开启Debug输出_" "1" )
 # 定义 module_log 输出日志函数
 module_log() {
-  echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" >> $LOG_FILE
+  echo "[$(date '+%m-%d %H:%M:%S')] $1" >> $LOG_FILE
   if [ "$DEBUG_STATUS" = "0" ]; then
-    echo "[$(date '+%m-%d %H:%M:%S.%3N')] $1" # for debug
+    echo "[$(date '+%m-%d %H:%M:%S')] $1" # for debug
   fi
 }
 module_log "正在启动息屏降频功能..."
@@ -43,7 +43,10 @@ chmod 644 /dev/cpuset/top-app/cpus
 
 # 读取是否开启渐进周期的设置
 ENABLE_GRADUAL=$(read_config "渐进增加_" "0")
+
+# 读取是否开启延迟唤醒和延迟的时间
 DELAYED_WEAKUP=$(read_config "延迟唤醒_" "1")
+DELAY_TIME=$(read_config "延迟时间_" "5")
 
 # 读取设置的检测周期
 BASE_CHECK_INTERVAL=$(read_config "检测周期_" "5")
@@ -63,6 +66,8 @@ SYSTEM_FOREGROUND=$(cat "/dev/cpuset/top-app/cpus")
 module_log "检测周期: $BASE_CHECK_INTERVAL"
 module_log "最大检测周期: $MAX_CHECK_INTERVAL"
 module_log "渐进周期启用: $ENABLE_GRADUAL"
+module_log "延迟唤醒启用: $DELAYED_WEAKUP"
+module_log "延迟唤醒时间: $DELAY_TIME"
 module_log "CPU最大频率: $CPU_MAX_FREQ"
 module_log "CPU最小频率: $CPU_MIN_FREQ"
 module_log "后台进程CPU集: $BACKGROUND"
@@ -97,10 +102,14 @@ while true; do
       fi
     fi
   else
-    # 退出省电模式
     
+    # 退出省电模式   
     module_log "退出息屏降频省电模式..."
-
+    
+    if [
+    SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
+    module_log "屏幕状态: $SCREEN_STATUS"
+    if [ "$SCREEN_STATUS" = "OFF" ]; then
     # 恢复到最大频率和原始CPU集分配
     echo $CPU_MAX_FREQ > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
     module_log "恢复到最大频率和原始CPU集分配"
