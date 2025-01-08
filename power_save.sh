@@ -102,26 +102,40 @@ while true; do
       fi
     fi
   else
-    
     # 退出省电模式   
     module_log "退出息屏降频省电模式..."
     
-    if [
-    SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
-    module_log "屏幕状态: $SCREEN_STATUS"
-    if [ "$SCREEN_STATUS" = "OFF" ]; then
-    # 恢复到最大频率和原始CPU集分配
-    echo $CPU_MAX_FREQ > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
-    module_log "恢复到最大频率和原始CPU集分配"
-    echo $BACKGROUND > /dev/cpuset/background/cpus
-    echo $SYSTEM_BACKGROUND > /dev/cpuset/system-background/cpus
-    echo $FOREGROUND > /dev/cpuset/foreground/cpus
-    echo $SYSTEM_FOREGROUND > /dev/cpuset/top-app/cpus
-    sleep $BASE_CHECK_INTERVAL
-    
-    # 重置检测间隔和检测次数
-    CHECK_INTERVAL=$BASE_CHECK_INTERVAL
-    CHECK_COUNT=0
+    if [ "$DELAYED_WEAKUP" = "0" ]; then
+      # 启用延迟唤醒
+      sleep $DELAY_TIME
+      SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
+      module_log "等待$DELAY_TIME，屏幕状态: $SCREEN_STATUS"
+      if [ "$SCREEN_STATUS" = "ON" ]; then
+        # 恢复到最大频率和原始CPU集分配
+        echo $CPU_MAX_FREQ > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
+        module_log "恢复到最大频率和原始CPU集分配"
+        echo $BACKGROUND > /dev/cpuset/background/cpus
+        echo $SYSTEM_BACKGROUND > /dev/cpuset/system-background/cpus
+        echo $FOREGROUND > /dev/cpuset/foreground/cpus
+        echo $SYSTEM_FOREGROUND > /dev/cpuset/top-app/cpus
+        sleep $BASE_CHECK_INTERVAL    
+        # 重置检测间隔和检测次数
+        CHECK_INTERVAL=$BASE_CHECK_INTERVAL
+        CHECK_COUNT=0
+      fi
+    else
+      # 恢复到最大频率和原始CPU集分配
+      echo $CPU_MAX_FREQ > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
+      module_log "恢复到最大频率和原始CPU集分配"
+      echo $BACKGROUND > /dev/cpuset/background/cpus
+      echo $SYSTEM_BACKGROUND > /dev/cpuset/system-background/cpus
+      echo $FOREGROUND > /dev/cpuset/foreground/cpus
+      echo $SYSTEM_FOREGROUND > /dev/cpuset/top-app/cpus
+      sleep $BASE_CHECK_INTERVAL    
+      # 重置检测间隔和检测次数
+      CHECK_INTERVAL=$BASE_CHECK_INTERVAL
+      CHECK_COUNT=0
+    fi
   fi
 done
 # 使用 trap 捕获信号，确保脚本终止时恢复原始状态
