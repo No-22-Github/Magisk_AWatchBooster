@@ -77,7 +77,8 @@ module_log "系统前台进程CPU集: $SYSTEM_FOREGROUND"
 
 # 初始化检测次数计数器
 CHECK_COUNT=0
-
+# 初始化延迟次数计数器
+DELAY_COUNT=0
 while true; do
   SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
   module_log "屏幕状态: $SCREEN_STATUS"
@@ -92,7 +93,7 @@ while true; do
     echo $POWER_SAVE_CPUS > /dev/cpuset/foreground/cpus
     echo $POWER_SAVE_CPUS > /dev/cpuset/top-app/cpus
     sleep $CHECK_INTERVAL
-    
+    DELAY_COUNT=0
     if [ "$ENABLE_GRADUAL" = "0" ]; then
       CHECK_COUNT=$((CHECK_COUNT + 1))
       # 每检测5次增加一次检测间隔，直到达到最大间隔
@@ -105,7 +106,7 @@ while true; do
     # 退出省电模式   
     module_log "退出息屏降频省电模式..."
     
-    if [ "$DELAYED_WEAKUP" = "0" ]; then
+    if [ "$DELAYED_WEAKUP" = "0" ] && [ "$DELAY_COUNT" = "0" ]; then
       # 启用延迟唤醒
       sleep $DELAY_TIME
       SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
@@ -122,6 +123,7 @@ while true; do
         # 重置检测间隔和检测次数
         CHECK_INTERVAL=$BASE_CHECK_INTERVAL
         CHECK_COUNT=0
+        DELAY_COUNT=1
       fi
     else
       # 恢复到最大频率和原始CPU集分配
