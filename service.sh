@@ -126,7 +126,7 @@ chmod 644 /dev/cpuset/system-background/cpus
 chmod 644 /dev/cpuset/foreground/cpus
 chmod 644 /dev/cpuset/top-app/cpus
 
-if [ "$PERFORMANCE" == "0" ]; then
+if [ "$PERFORMANCE" == "0" ] || [ "$PERFORMANCE" == "1" ]; then
   # 设置 CPU 应用分配
   # 用户后台应用
   echo $BACKGROUND > /dev/cpuset/background/cpus
@@ -142,7 +142,6 @@ if [ "$PERFORMANCE" == "0" ]; then
   module_log "- 系统的后台应用: $SYSTEM_BACKGROUND"
   module_log "- 前台应用: $FOREGROUND"
   module_log "- 上层应用: $SYSTEM_FOREGROUND"
-
   # 温控
   # 60 度开始降频，保护电池
   echo $TEMP_THRESHOLD > /sys/class/thermal/thermal_zone0/trip_point_0_temp
@@ -153,11 +152,11 @@ if [ "$PERFORMANCE" == "0" ]; then
   chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
   echo "$CPU_SCALING" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
   CPU_SCALING_UPPERCASE=$(echo "$CPU_SCALING" | tr '[:lower:]' '[:upper:]')
-  module_log "CPU 调度模式为 ${CPU_SCALING_UPPERCASE} 性能模式"
+  module_log "CPU 调度模式为 ${CPU_SCALING_UPPERCASE} 模式"
 fi
 
 # 省电模式
-if [ "$PERFORMANCE" == "1" ]; then
+if [ "$PERFORMANCE" == "2" ]; then
   # 设置 CPU 应用分配
   echo "0" > /dev/cpuset/background/cpus
   # 系统后台应用
@@ -169,7 +168,7 @@ if [ "$PERFORMANCE" == "1" ]; then
   module_log "省电模式，启动！"
   module_log "正在设置 CPU 应用分配"
   module_log "- 用户的后台应用: 0"
-  module_log "- 系统的后台应用: 0"
+  module_log "- 系统的后台应用: 1"
   module_log "- 前台应用: 0-3"
   module_log "- 上层应用: 2-3"
   # 温控
@@ -182,7 +181,7 @@ if [ "$PERFORMANCE" == "1" ]; then
   chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
   echo "$CPU_SCALING" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
   CPU_SCALING_UPPERCASE=$(echo "$CPU_SCALING" | tr '[:lower:]' '[:upper:]')
-  module_log "CPU 调度模式为 ${CPU_SCALING_UPPERCASE} 性能模式"
+  module_log "CPU 调度模式为 ${CPU_SCALING_UPPERCASE} 模式"
 fi
 
 # I/O STATS 优化
@@ -265,6 +264,7 @@ echo "30100000" > /sys/class/power_supply/parallel/constant_charge_current_max
 echo "30100000" > /sys/class/power_supply/battery/constant_charge_current_max
 echo "31000000" > /sys/class/qcom-battery/restricted_current
 module_log "已开启快充优化"
+
 # TCP 优化
 if [ "$OPTIMIZE_TCP" == "0" ]; then
   echo "
