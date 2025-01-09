@@ -113,7 +113,7 @@ module_log "开机完成，已获取到 config.yaml 配置..."
 if [ "PERFORMANCE" = "0" ]; then
   CPU_SCALING="performance"
 else
-  CPU_SCALING="interactive"
+  CPU_SCALING="sprdemand"
 fi
 
 chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
@@ -160,7 +160,7 @@ if [ "$PERFORMANCE" = "2" ]; then
   # 前台应用
   echo "0-2" > /dev/cpuset/foreground/cpus
   # 上层应用
-  echo "3" > /dev/cpuset/top-app/cpus
+  echo "2-3" > /dev/cpuset/top-app/cpus
   module_log "省电模式，启动！"
   module_log "正在设置 CPU 应用分配"
   module_log "- 用户的后台应用: 0"
