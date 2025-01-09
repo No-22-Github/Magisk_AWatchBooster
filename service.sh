@@ -98,7 +98,7 @@ ZRAM_STATUS=$(read_config "ZRAM状态_" "0")
 POWER_SAVE=$(read_config "息屏降频_" "0")
 
 # 调整模块日志输出
-if [ "$OPTIMIZE_MODULE" == "0" ]; then
+if [ "$OPTIMIZE_MODULE" = "0" ]; then
   # 判断日志文件是否为已创建
   # 已创建则在文件末尾添加换行
   [ -f $LOG_FILE ] && echo "" >> $LOG_FILE
@@ -110,12 +110,8 @@ fi
 module_log "开机完成，已获取到 config.yaml 配置..."
 
 # 选择 CPU 调速器
-if [ "PERFORMANCE" == "0" ]; then
+if [ "PERFORMANCE" = "0" ]; then
   CPU_SCALING="performance"
-elif [ "PERFORMANCE" == "1" ]; then
-  CPU_SCALING="interactive"
-elif [ "PERFORMANCE" == "2" ]; then
-  CPU_SCALING="sprdemand"
 else
   CPU_SCALING="interactive"
 fi
@@ -126,7 +122,7 @@ chmod 644 /dev/cpuset/system-background/cpus
 chmod 644 /dev/cpuset/foreground/cpus
 chmod 644 /dev/cpuset/top-app/cpus
 
-if [ "$PERFORMANCE" == "0" ] || [ "$PERFORMANCE" == "1" ]; then
+if [ "$PERFORMANCE" = "0" ] || [ "$PERFORMANCE" = "1" ]; then
   # 设置 CPU 应用分配
   # 用户后台应用
   echo $BACKGROUND > /dev/cpuset/background/cpus
@@ -156,21 +152,21 @@ if [ "$PERFORMANCE" == "0" ] || [ "$PERFORMANCE" == "1" ]; then
 fi
 
 # 省电模式
-if [ "$PERFORMANCE" == "2" ]; then
+if [ "$PERFORMANCE" = "2" ]; then
   # 设置 CPU 应用分配
   echo "0" > /dev/cpuset/background/cpus
   # 系统后台应用
   echo "1" > /dev/cpuset/system-background/cpus
   # 前台应用
-  echo "0-3" > /dev/cpuset/foreground/cpus
+  echo "0-2" > /dev/cpuset/foreground/cpus
   # 上层应用
-  echo "2-3" > /dev/cpuset/top-app/cpus
+  echo "3" > /dev/cpuset/top-app/cpus
   module_log "省电模式，启动！"
   module_log "正在设置 CPU 应用分配"
   module_log "- 用户的后台应用: 0"
   module_log "- 系统的后台应用: 1"
-  module_log "- 前台应用: 0-3"
-  module_log "- 上层应用: 2-3"
+  module_log "- 前台应用: 0-2"
+  module_log "- 上层应用: 3"
   # 温控
   # 60 度开始降频，保护电池
   echo $TEMP_THRESHOLD > /sys/class/thermal/thermal_zone0/trip_point_0_temp
@@ -196,7 +192,7 @@ module_log "已开启固态&内存优化"
 
 
 # 关闭 ZRAM 减少性能/磁盘损耗
-if [ "$ZRAM_STATUS" == "0" ]; then
+if [ "$ZRAM_STATUS" = "0" ]; then
   swapoff /dev/block/zram0 2>/dev/null
   swapoff /dev/block/zram1 2>/dev/null
   swapoff /dev/block/zram2 2>/dev/null
@@ -204,18 +200,18 @@ if [ "$ZRAM_STATUS" == "0" ]; then
   module_log "已禁用 ZRAM 压缩内存"
 fi
 # 不关闭 ZRAM
-if [ "$ZRAM_STATUS" == "1" ]; then
+if [ "$ZRAM_STATUS" = "1" ]; then
   module_log "未禁用 ZRAM 压缩内存"
   module_log "当前由系统默认配置"
 fi
 
 # 无线 ADB
-if [ "$WIRELESS_ADB" == "0" ]; then
+if [ "$WIRELESS_ADB" = "0" ]; then
   setprop persist.adb.enable 1 && setprop persist.service.adb.enable 1 && setprop service.adb.tcp.port 5555 && stop adbd && start adbd
   module_log "已开启 ADB 在 5555 端口"
 fi
 
-if [ "$WIRELESS_ADB" == "1" ]; then
+if [ "$WIRELESS_ADB" = "1" ]; then
   module_log "未开启无线 ADB"
 fi
 
@@ -266,7 +262,7 @@ echo "31000000" > /sys/class/qcom-battery/restricted_current
 module_log "已开启快充优化"
 
 # TCP 优化
-if [ "$OPTIMIZE_TCP" == "0" ]; then
+if [ "$OPTIMIZE_TCP" = "0" ]; then
   echo "
 net.ipv4.conf.all.route_localnet=1
 net.ipv4.ip_forward = 1
