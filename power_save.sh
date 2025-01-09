@@ -107,10 +107,12 @@ while true; do
     module_log "退出息屏降频省电模式..."
     
     if [ "$DELAYED_WEAKUP" = "0" ] && [ "$DELAY_COUNT" = "0" ]; then
+      module_log "启用延迟唤醒..."
+      module_log "等待 $DELAY_TIME 秒"
       # 启用延迟唤醒
       sleep $DELAY_TIME
       SCREEN_STATUS=$(dumpsys display | grep mScreenState | awk -F '=' '{print $2}')
-      module_log "等待$DELAY_TIME，屏幕状态: $SCREEN_STATUS"
+      module_log "屏幕状态: $SCREEN_STATUS"
       if [ "$SCREEN_STATUS" = "ON" ]; then
         # 恢复到最大频率和原始CPU集分配
         echo $CPU_MAX_FREQ > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
