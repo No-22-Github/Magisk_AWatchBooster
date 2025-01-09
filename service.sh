@@ -132,7 +132,7 @@ if [ "$PERFORMANCE" = "0" ] || [ "$PERFORMANCE" = "1" ]; then
   echo $FOREGROUND > /dev/cpuset/foreground/cpus
   # 上层应用
   echo $SYSTEM_FOREGROUND > /dev/cpuset/top-app/cpus
-  module_log "性能模式，启动！"
+  module_log "性能/均衡模式，启动！"
   module_log "正在设置 CPU 应用分配"
   module_log "- 用户的后台应用: $BACKGROUND"
   module_log "- 系统的后台应用: $SYSTEM_BACKGROUND"
