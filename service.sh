@@ -71,7 +71,8 @@ if [ "$rand_num" -eq 0 ]; then
 fi
 
 # 读取 config.yaml 配置
-
+# 获取 CPU 最大频率值
+CPU_MAX_FREQ=$(read_config "频率限制_" "1")
 # 获取性能模式
 # 0: 性能优先
 # 1: 均衡模式
@@ -122,6 +123,12 @@ chmod 644 /dev/cpuset/system-background/cpus
 chmod 644 /dev/cpuset/foreground/cpus
 chmod 644 /dev/cpuset/top-app/cpus
 
+if [ "$CPU_MAX_FREQ" != "1" ]; then
+  khz=$(echo "$CPU_MAX_FREQ" | sed 's/[^0-9]//g' | awk '{print $1 * 1000}')
+  echo $khz > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
+  module_log "CPU 频率限制已启动，当前 CPU 最大频率：$CPU_MAX_FREQ"
+fi
+
 if [ "$PERFORMANCE" = "0" ] || [ "$PERFORMANCE" = "1" ]; then
   # 设置 CPU 应用分配
   # 用户后台应用
@@ -158,14 +165,14 @@ if [ "$PERFORMANCE" = "2" ]; then
   # 系统后台应用
   echo "1" > /dev/cpuset/system-background/cpus
   # 前台应用
-  echo "0-2" > /dev/cpuset/foreground/cpus
+  echo "0-3" > /dev/cpuset/foreground/cpus
   # 上层应用
-  echo "2-3" > /dev/cpuset/top-app/cpus
+  echo "3" > /dev/cpuset/top-app/cpus
   module_log "省电模式，启动！"
   module_log "正在设置 CPU 应用分配"
   module_log "- 用户的后台应用: 0"
   module_log "- 系统的后台应用: 1"
-  module_log "- 前台应用: 0-2"
+  module_log "- 前台应用: 0-3"
   module_log "- 上层应用: 3"
   # 温控
   # 60 度开始降频，保护电池
