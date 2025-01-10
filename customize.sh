@@ -1,3 +1,4 @@
+MODDIR=${0%/*}
 ui_print "################################################################"
 ui_print "您正在安装的是 AWatchBooster 安卓手表通用优化模块"
     echo '   ___ _      __     __      __   ___                __         '
@@ -22,23 +23,7 @@ ui_print "- 创建 AWatchBooster 文件夹"
 ui_print "- 配置文件与日志位于 /storage/emulated/0/Android/AWatchBooster"
 unzip -o "$ZIPFILE" 'config.yaml' -d "/storage/emulated/0/Android/AWatchBooster/" >&2
 ui_print "- 正在获取获取 CPU 可用频率档位"
-# 获取 CPU 可用频率挡，单位为 kHz
-frequencies_khz=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies)
-
-# 创建或清空临时文件
-temp_yaml=$(mktemp)
-
-# 将频率值转换为 MHz 并输出到临时文件
-for freq in $frequencies_khz; do
-  freq_mhz=$((freq / 1000))
-  echo "  - ${freq_mhz} MHz" >> "$temp_yaml"
-done
-
-# 将频率信息插入到目标 YAML 文件的 frequencies 字段
-sed -i '/可用频率档位:/r '"$temp_yaml"'' /storage/emulated/0/Android/AWatchBooster/config.yaml
-
-# 删除临时文件
-rm "$temp_yaml"
+sh "$MODDIR/get_cpu_freq.sh" &
 echo "[$(date '+%m-%d %H:%M:%S.%3N')] AWatchBooster 模块安装成功, 等待重启" >> "/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
 ui_print "- AWatchBooster 安卓手表通用优化模块"
 ui_print "- Ver 1.6 已安装！"
