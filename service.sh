@@ -124,7 +124,7 @@ chmod 644 /dev/cpuset/foreground/cpus
 chmod 644 /dev/cpuset/top-app/cpus
 
 if [ "$CPU_MAX_FREQ" != "1" ]; then
-  khz=$(echo "$CPU_MAX_FREQ" | sed 's/[^0-9]//g' | awk '{print $1 * 1000}')
+  khz=$(echo "$CPU_MAX_FREQ" | awk '{gsub(/[^0-9]/, ""); print $1 * 1000}')
   echo $khz > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
   module_log "CPU 频率限制已启动，当前 CPU 最大频率：$CPU_MAX_FREQ"
 fi
