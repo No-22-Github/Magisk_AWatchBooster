@@ -21,7 +21,7 @@ ui_print "- 创建 AWatchBooster 文件夹"
 
 ui_print "- 配置文件与日志位于 /storage/emulated/0/Android/AWatchBooster"
 unzip -o "$ZIPFILE" 'config.yaml' -d "/storage/emulated/0/Android/AWatchBooster/" >&2
-ui_print "正在获取获取 CPU 可用频率档位"
+ui_print "- 正在获取获取 CPU 可用频率档位"
 # 获取 CPU 可用频率挡，单位为 kHz
 frequencies_khz=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies)
 # 创建或清空临时文件
