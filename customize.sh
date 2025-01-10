@@ -22,7 +22,6 @@ ui_print "- 创建 AWatchBooster 文件夹"
 
 ui_print "- 配置文件与日志位于 /storage/emulated/0/Android/AWatchBooster"
 unzip -o "$ZIPFILE" 'config.yaml' -d "/storage/emulated/0/Android/AWatchBooster/" >&2
-ui_print "- 正在获取获取 CPU 可用频率档位"
 echo "[$(date '+%m-%d %H:%M:%S.%3N')] AWatchBooster 模块安装成功, 等待重启" >> "/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
 ui_print "- AWatchBooster 安卓手表通用优化模块"
 ui_print "- Ver 1.6 已安装！"
