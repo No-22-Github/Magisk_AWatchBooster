@@ -35,8 +35,10 @@ ui_print "可用频率档位: $frequencies_khz"
 temp_yaml=$(mktemp)
 for freq in $frequencies_khz; do
   freq_mhz=$((freq / 1000))
-  echo "  - ${freq_mhz} MHz" >> "$temp_yaml"
-done
+  echo "  - ${freq_mhz} MHz" >>
+
+ui_print "频率信息临时文件内容:"
+cat $temp_yaml
 
 # 将频率信息插入到配置文件
 ui_print "正在将频率信息插入配置文件..."
@@ -46,6 +48,9 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 rm "$temp_yaml"
+
+ui_print "配置文件内容:"
+cat /storage/emulated/0/Android/AWatchBooster/config.yaml
 
 echo "[$(date '+%m-%d %H:%M:%S.%3N')] AWatchBooster 模块安装成功, 等待重启" >> "/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
 
