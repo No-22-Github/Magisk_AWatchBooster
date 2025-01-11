@@ -17,7 +17,6 @@ ui_print "系统版本：$(getprop ro.build.display.id)"
 ui_print "处理器：$(getprop ro.board.platform)"
 ui_print "- 正在释放文件"
 
-# 使用 -p 参数来确保目录已存在或成功创建
 mkdir -p "/storage/emulated/0/Android/AWatchBooster"
 ui_print "- 创建 AWatchBooster 文件夹"
 
@@ -26,45 +25,19 @@ unzip -o "$ZIPFILE" 'config.yaml' -d "/storage/emulated/0/Android/AWatchBooster/
 
 ui_print "- 正在获取 CPU 可用频率档位"
 frequencies_khz=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies)
-if [ -z "$frequencies_khz" ]; then
-  ui_print "错误：无法获取 CPU 频率档位"
-  exit 1
-fi
 ui_print "可用频率档位: $frequencies_khz"
 
 temp_yaml="/storage/emulated/0/Android/AWatchBooster/temp.yaml"
 touch "$temp_yaml"
-if [ ! -e "$temp_yaml" ]; then
-  ui_print "错误：无法创建临时文件"
-  exit 1
-fi
-ui_print "临时文件创建成功: $temp_yaml"
 
 for freq in $frequencies_khz; do
   freq_mhz=$((freq / 1000))
   echo "  - ${freq_mhz} MHz" >> "$temp_yaml"
 done
 
-ui_print "频率信息临时文件内容:"
-cat $temp_yaml
-if [ $? -ne 0 ]; then
-  ui_print "错误：无法读取临时文件内容"
-  exit 1
-fi
-
-# 将频率信息插入到配置文件
-ui_print "正在将频率信息插入配置文件..."
-sed "/可用频率档位:/r $temp_yaml" /storage/emulated/0/Android/AWatchBooster/config.yaml > /storage/emulated/0/Android/AWatchBooster/config.yaml.tmp
-if [ $? -ne 0 ]; then
-  ui_print "错误：无法插入频率信息到配置文件"
-  exit 1
-fi
-mv /storage/emulated/0/Android/AWatchBooster/config.yaml.tmp /storage/emulated/0/Android/AWatchBooster/config.yaml
+sed "/可用频率档位:/r $temp_yaml" /storage/emulated/0/Android/AWatchBooster/config.yaml
 
 rm "$temp_yaml"
-
-ui_print "配置文件内容:"
-cat /storage/emulated/0/Android/AWatchBooster/config.yaml
 
 echo "[$(date '+%m-%d %H:%M:%S.%3N')] AWatchBooster 模块安装成功, 等待重启" >> "/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
 
