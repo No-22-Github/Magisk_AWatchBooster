@@ -33,13 +33,22 @@ fi
 ui_print "可用频率档位: $frequencies_khz"
 
 temp_yaml=$(mktemp)
-for freq in $frequencies_khz; do
-  freq_mhz=$((freq / 1000))
+if [ ! -e "$temp_yaml" ]; then
+  ui_print "错误：无法创建临时文件"
+  exit 1
+fi
+ui_print "临时文件创建成功: $temp_yaml"
+
+for freqhz=$((freq / 1000))
   echo "  - ${freq_mhz} MHz" >> "$temp_yaml"
 done
 
 ui_print "频率信息临时文件内容:"
 cat $temp_yaml
+if [ $? -ne 0 ]; then
+  ui_print "错误：无法读取临时文件内容"
+  exit 1
+fi
 
 # 将频率信息插入到配置文件
 ui_print "正在将频率信息插入配置文件..."
