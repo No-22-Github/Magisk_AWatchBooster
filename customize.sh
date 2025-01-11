@@ -26,6 +26,12 @@ unzip -o "$ZIPFILE" 'config.yaml' -d "/storage/emulated/0/Android/AWatchBooster/
 
 ui_print "- 正在获取 CPU 可用频率档位"
 frequencies_khz=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies)
+if [ -z "$frequencies_khz" ]; then
+  ui_print "错误：无法获取 CPU 频率档位"
+  exit 1
+fi
+ui_print "可用频率档位: $frequencies_khz"
+
 temp_yaml=$(mktemp)
 for freq in $frequencies_khz; do
   freq_mhz=$((freq / 1000))
