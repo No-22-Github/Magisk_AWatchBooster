@@ -30,27 +30,17 @@ LOG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
 
 # 定义 read_config 读取配置函数，若找不到匹配项，则返回默认值
 read_config() {
-  # 确保$1被正确处理，如果$1含有特殊字符，可以转义它
   local key="$1"
   local default_value="$2"
 
-  # 使用printf来确保$1不被特殊字符误解析
-  result=$(grep -E "^\s*${key//\//\\/}" "$CONFIG_FILE" | cut -d '_' -f2-)
+  local value=$(grep -i "^[[:space:]]*$key[[:space:]]*=" "$CONFIG_FILE" | 
+                sed -E "s/^[[:space:]]*$key[[:space:]]*=[[:space:]]*(.*)/\1/" |
+                tr -d '\r')
 
-  # 输出原始结果以便调试
-  echo "Raw result: '$result'"
-
-  # 使用更加宽容的空白字符处理
-  result=$(echo "$result" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-
-  # 输出修剪后的结果以便调试
-  echo "Trimmed result: '$result'"
-
-  # 如果没有找到有效结果，则返回默认值
-  if [ -z "$result" ]; then
+  if [ -z "$value" ]; then
     echo "$default_value"
   else
-    echo "$result"
+    echo "$value"
   fi
 }
 DEBUG_STATUS=$(read_config "开启Debug输出_" "1" )
