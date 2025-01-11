@@ -30,13 +30,7 @@ LOG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
 
 # 定义 read_config 读取配置函数，若找不到匹配项，则返回默认值
 read_config() {
-  result=$(awk -v start="$1" '
-    $0 ~ "^" start {
-      sub("^" start, "");
-      print;
-      exit
-    }
-  ' "$CONFIG_FILE")
+  result=$(grep "^$1" "$CONFIG_FILE" | cut -d '_' -f2- | sed 's/^ *//;s/ *$//')
   if [ -z "$result" ]; then
     echo "$2"
   else
@@ -124,9 +118,11 @@ chmod 644 /dev/cpuset/foreground/cpus
 chmod 644 /dev/cpuset/top-app/cpus
 
 if [ "$CPU_MAX_FREQ" != "1" ]; then
-  khz=$(echo "$CPU_MAX_FREQ" | awk '{gsub(/[^0-9]/, ""); print $1 * 1000}')
-  echo $khz > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
-  module_log "CPU 频率限制已启动，当前 CPU 最大频率：$CPU_MAX_FREQ"
+  # 将 CPU 最大频率转换为 kHz
+  max_freq_khz=$(echo "$CPU_MAX_FREQ" | awk '{gsub(/[^0-9]/, ""); print $1 * 1000}')
+  # 设置 CPU 最大频率
+  echo $max_freq_khz > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
+  module_log "CPU 频率限制已启动，当前 CPU 最大频率：${max_freq_khz} kHz"
 fi
 
 if [ "$PERFORMANCE" = "0" ] || [ "$PERFORMANCE" = "1" ]; then
