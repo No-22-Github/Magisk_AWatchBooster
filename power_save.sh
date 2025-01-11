@@ -55,7 +55,7 @@ MAX_CHECK_INTERVAL=$(($BASE_CHECK_INTERVAL * $MAGNIFICATION)) # 最大检测间�
 CHECK_INTERVAL=$BASE_CHECK_INTERVAL
 
 # 获取 CPU 当前状态信息
-CPU_MAX_FREQ=$(cat "/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_max_freq")
+CPU_MAX_FREQ=$(cat "/sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq")
 CPU_MIN_FREQ=$(cat "/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_min_freq")
 BACKGROUND=$(cat "/dev/cpuset/background/cpus")
 SYSTEM_BACKGROUND=$(cat "/dev/cpuset/system-background/cpus")
