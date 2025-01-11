@@ -35,18 +35,21 @@ ui_print "可用频率档位: $frequencies_khz"
 temp_yaml=$(mktemp)
 for freq in $frequencies_khz; do
   freq_mhz=$((freq / 1000))
-  echo "  - ${freq_mhz} MHz" >>
+  echo "  - ${freq_mhz} MHz" >> "$temp_yaml"
+done
 
 ui_print "频率信息临时文件内容:"
 cat $temp_yaml
 
 # 将频率信息插入到配置文件
 ui_print "正在将频率信息插入配置文件..."
-sed -i "/可用频率档位:/r $temp_yaml" /storage/emulated/0/Android/AWatchBooster/config.yaml
+sed "/可用频率档位:/r $temp_yaml" /storage/emulated/0/Android/AWatchBooster/config.yaml > /storage/emulated/0/Android/AWatchBooster/config.yaml.tmp
 if [ $? -ne 0 ]; then
   ui_print "错误：无法插入频率信息到配置文件"
   exit 1
 fi
+mv /storage/emulated/0/Android/AWatchBooster/config.yaml.tmp /storage/emulated/0/Android/AWatchBooster/config.yaml
+
 rm "$temp_yaml"
 
 ui_print "配置文件内容:"
