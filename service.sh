@@ -30,18 +30,8 @@ LOG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
 
 # 定义 read_config 读取配置函数，若找不到匹配项，则返回默认值
 read_config() {
-  local key="$1"
-  local default_value="$2"
-
-  local value=$(grep -i "^[[:space:]]*$key[[:space:]]*=" "$CONFIG_FILE" | 
-                sed -E "s/^[[:space:]]*$key[[:space:]]*=[[:space:]]*(.*)/\1/" |
-                tr -d '\r')
-
-  if [ -z "$value" ]; then
-    echo "$default_value"
-  else
-    echo "$value"
-  fi
+  local result=$(sed -n "s/^$1//p" "$CONFIG_FILE")
+  echo ${result:-$2}
 }
 DEBUG_STATUS=$(read_config "开启Debug输出_" "1" )
 # 定义 module_log 输出日志函数
