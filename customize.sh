@@ -32,14 +32,16 @@ if [ -z "$frequencies_khz" ]; then
 fi
 ui_print "可用频率档位: $frequencies_khz"
 
-temp_yaml=$(mktemp)
+temp_yaml="/storage/emulated/0/Android/AWatchBooster/temp.yaml"
+touch "$temp_yaml"
 if [ ! -e "$temp_yaml" ]; then
   ui_print "错误：无法创建临时文件"
   exit 1
 fi
 ui_print "临时文件创建成功: $temp_yaml"
 
-for freqhz=$((freq / 1000))
+for freq in $frequencies_khz; do
+  freq_mhz=$((freq / 1000))
   echo "  - ${freq_mhz} MHz" >> "$temp_yaml"
 done
 
