@@ -29,6 +29,7 @@ for freq in $frequencies_khz; do
   freq_mhz=$((freq / 1000))
   echo "  - ${freq_mhz} MHz" >> "$temp_yaml"
 done
+cat $temp_yaml
 # 将频率信息插入到配置文件
 sed -i "/可用频率档位:/r $temp_yaml" /storage/emulated/0/Android/AWatchBooster/config.yaml
 rm "$temp_yaml"
