@@ -37,8 +37,14 @@ for freq in $frequencies_khz; do
   freq_mhz=$((freq / 1000))
   echo "  - ${freq_mhz} MHz" >> "$temp_yaml"
 done
+
 # 将频率信息插入到配置文件
+ui_print "正在将频率信息插入配置文件..."
 sed -i "/可用频率档位:/r $temp_yaml" /storage/emulated/0/Android/AWatchBooster/config.yaml
+if [ $? -ne 0 ]; then
+  ui_print "错误：无法插入频率信息到配置文件"
+  exit 1
+fi
 rm "$temp_yaml"
 
 echo "[$(date '+%m-%d %H:%M:%S.%3N')] AWatchBooster 模块安装成功, 等待重启" >> "/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
