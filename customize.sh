@@ -18,14 +18,10 @@ ui_print "处理器：$(getprop ro.board.platform)"
 ui_print "- 正在释放文件"
 
 mkdir -p "/storage/emulated/0/Android/AWatchBooster"
-ui_print "- 创建 AWatchBooster 文件夹"
 
-ui_print "- 配置文件与日志位于 /storage/emulated/0/Android/AWatchBooster"
 unzip -o "$ZIPFILE" 'config.yaml' -d "/storage/emulated/0/Android/AWatchBooster/" >&2
 
-ui_print "- 正在获取 CPU 可用频率档位"
 frequencies_khz=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies)
-ui_print "可用频率档位: $frequencies_khz"
 
 temp_yaml="/storage/emulated/0/Android/AWatchBooster/temp.yaml"
 touch "$temp_yaml"
