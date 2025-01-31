@@ -7,18 +7,8 @@ LOG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
 
 # 定义 read_config 读取配置函数，若找不到匹配项，则返回默认值
 read_config() {
-  result=$(awk -v start="$1" '
-    $0 ~ "^" start {
-      sub("^" start, "");
-      print;
-      exit
-    }
-  ' "$CONFIG_FILE")
-  if [ -z "$result" ]; then
-    echo "$2"
-  else
-    echo "$result"
-  fi
+  local result=$(sed -n "s/^$1//p" "$CONFIG_FILE")
+  echo ${result:-$2}
 }
 
 DEBUG_STATUS=$(read_config "开启Debug输出_" "1" )
