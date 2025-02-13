@@ -7,5 +7,5 @@ while true; do
         *)    
             setprop sys.usb.config mtp
     esac
-    sleep 5
+    sleep 10
 done
