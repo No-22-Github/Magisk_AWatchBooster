@@ -1,4 +1,4 @@
-# AWatchBooster v1.0
+# AWatchBooster
 # 基于 Magisk-All-In-One v1.3
 # 延迟执行 service.sh 脚本
 # All-In-One v1.0 的 sleep 1m 在某些设备上不太实际
@@ -25,8 +25,8 @@ done
 rm "$test_file"
 
 # 定义配置文件路径和日志文件路径
-CONFIG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml"
-LOG_FILE="/storage/emulated/0/Android/AWatchBooster/config.yaml.log"
+CONFIG_FILE="/storage/emulated/0/AWatchBooster/config.yaml"
+LOG_FILE="/storage/emulated/0/AWatchBooster/config.yaml.log"
 
 # 定义 read_config 读取配置函数，若找不到匹配项，则返回默认值
 read_config() {
@@ -64,7 +64,6 @@ BACKGROUND=$(read_config "用户后台应用_" "0")
 SYSTEM_BACKGROUND=$(read_config "系统后台应用_" "0")
 FOREGROUND=$(read_config "前台应用_" "0-3")
 SYSTEM_FOREGROUND=$(read_config "上层应用_" "0-3")
-
 # 模块日志输出
 OPTIMIZE_MODULE=$(read_config "模块日志输出_" "0")
 # 无线 ADB 调试
@@ -73,7 +72,8 @@ WIRELESS_ADB=$(read_config "无线ADB调试_" "0")
 ZRAM_STATUS=$(read_config "ZRAM状态_" "0")
 # 息屏降频省电功能
 POWER_SAVE=$(read_config "息屏降频_" "0")
-
+# 设置USB为MTP协议
+USB_MTP=$(read_config "设置USB为MTP_" "1")
 # 调整模块日志输出
 if [ "$OPTIMIZE_MODULE" = "0" ]; then
   # 判断日志文件是否为已创建
@@ -250,6 +250,12 @@ module_log "已开启快充优化"
 if [ "$POWER_SAVE" = "0" ]; then
   sh "$MODDIR/power_save.sh" &
   module_log "已开启息屏降频省电功能"
+fi
+
+# 设置USB为MTP
+if [ "$USB_MTP" = "0" ]; then
+  sh "$MODDIR/set_mtp.sh" &
+  module_log "已开启设置 USB 为 MTP 协议功能"
 fi
 # 通过DEBUG模式开启GPU加速
 settings put global enable_gpu_debug_layers 0
